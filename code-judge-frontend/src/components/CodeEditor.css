@@ -1,0 +1,98 @@
+/* Global Container for Layout */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr; /* 40% / 60% split */
+  height: 100vh;
+  min-height: 600px; /* Set a minimum height */
+  gap: 0; /* No gap between columns */
+}
+
+/* Sidebar for ProblemComponent */
+.sidebar {
+  background-color: #f5f5f5;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  min-width: 300px; /* Ensures minimum usability */
+}
+
+/* Editor Section */
+.editor {
+  display: flex;
+  flex-direction: column;
+  position: relative; /* For absolute positioning of internal elements */
+  background-color: #ffffff;
+  min-width: 450px; /* Ensures minimum usability */
+  padding: 20px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Language Selector Positioned at Top Right */
+.language-selector {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  font-size: 14px;
+}
+
+/* Main Editor Area */
+.editor-wrapper {
+  flex: 1;
+  margin-top: 60px; /* Space for the language selector */
+}
+
+/* Submit Button Positioned at Bottom Right */
+.submit-button-container {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  text-align: right;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .container {
+    grid-template-columns: 1fr; /* Stacks sidebar and editor vertically */
+    grid-template-rows: auto 1fr;
+  }
+
+  .sidebar {
+    min-width: 100%; /* Ensures sidebar takes full width in stacked layout */
+    box-shadow: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .editor {
+    min-width: 100%; /* Ensures editor takes full width in stacked layout */
+    box-shadow: none;
+  }
+
+  .language-selector {
+    right: 10px; /* Adjusts padding for smaller screens */
+  }
+
+  .submit-button-container {
+    right: 10px; /* Adjusts padding for smaller screens */
+  }
+}

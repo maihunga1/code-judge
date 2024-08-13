@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProblem } from "../api";
+import { getProblem } from "../api/api";
 import DOMPurify from "dompurify";
 
 interface Problem {
@@ -11,7 +11,7 @@ interface ProblemComponentProps {
   title: string;
 }
 
-function ProblemComponent({ title }: ProblemComponentProps) {
+function Problems({ title }: ProblemComponentProps) {
   const [problem, setProblem] = useState<Problem | null>(null);
 
   useEffect(() => {
@@ -29,4 +29,4 @@ function ProblemComponent({ title }: ProblemComponentProps) {
   );
 }
 
-export default ProblemComponent;
+export default Problems;

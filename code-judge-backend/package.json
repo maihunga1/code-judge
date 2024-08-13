@@ -4,15 +4,18 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node main.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.17"
+    "@types/cors": "^2.8.17",
+    "@types/jsonwebtoken": "^9.0.6"
   }
 }

@@ -1,0 +1,67 @@
+/* Container */
+.container {
+  display: flex;
+  height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 40%;
+  padding: 20px;
+  background-color: #ffffff;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+/* EditorContainer */
+.editor-container {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+/* LanguageSelector */
+.language-selector {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+/* EditorWrapper */
+.editor-wrapper {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+/* SubmitButtonContainer */
+.submit-button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
+}
+
+/* SubmitButton */
+.submit-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}

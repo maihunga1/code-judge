@@ -1,0 +1,31 @@
+import express, { Router } from "express";
+import { codeJudgeController } from "../controllers";
+
+export class CodeJudgeRouter {
+  private readonly router: Router;
+
+  constructor() {
+    this.router = express.Router();
+    this.initializeRoutes();
+  }
+
+  private initializeRoutes(): void {
+    // Get all problems
+    this.router.get("/problems", codeJudgeController.getAllProblems);
+
+    // Get problem description
+    this.router.get(
+      "/problems/:problemID",
+      codeJudgeController.getProblemDescription
+    );
+
+    // Create a new submission
+    this.router.post("/submissions", codeJudgeController.createSubmission);
+  }
+
+  public getRouter(): Router {
+    return this.router;
+  }
+}
+
+export const codeJudgeRouter = new CodeJudgeRouter().getRouter();

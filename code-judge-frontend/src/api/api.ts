@@ -40,9 +40,9 @@ async function register(username: string, password: string) {
   }
 }
 
-async function getProblem(title: string) {
+async function getProblem(titleSlug: string) {
   try {
-    const response = await axios.get(`${backendUrl}/problem/${title}`);
+    const response = await axios.get(`${backendUrl}/problems/${titleSlug}`);
     console.info("Problem fetched successfully:", response.data);
     return response.data;
   } catch (error) {
@@ -55,4 +55,20 @@ async function getProblem(title: string) {
   }
 }
 
-export { getProblem, login, register };
+async function getProblemList() {
+  try {
+    const response = await axios.get(`${backendUrl}/problems`);
+    window.console.info("Problems fetched successfully:", response.data);
+
+    return response.data.questions;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Error fetching problem:", error.response.data);
+    } else {
+      console.error("Error fetching problem:", error);
+    }
+    throw new Error("Failed to fetch problem. Please try again later.");
+  }
+}
+
+export { getProblem, login, register, getProblemList };

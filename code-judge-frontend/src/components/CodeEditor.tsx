@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
-import "./CodeEditor.css";
+import "../styles/CodeEditor.css";
 
 export interface CodeEditorProps {
   language: string;

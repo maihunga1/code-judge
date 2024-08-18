@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { login as loginApi } from "../api/api";
-import "./Login.css"; // Assuming you have a CSS file for styling
+import "../styles/Login.css";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -16,10 +16,14 @@ const Login = () => {
     try {
       const data = await loginApi(username, password);
       login(data.token);
-      navigate("/editor"); // Navigate to /problems on successful login
+      navigate("/problems");
     } catch (err) {
       setError("Invalid credentials");
     }
+  };
+
+  const handleRegister = () => {
+    navigate("/register");
   };
 
   return (
@@ -50,6 +54,10 @@ const Login = () => {
           {error && <p className="error-message">{error}</p>}
           <button type="submit" className="login-button">
             Login
+          </button>
+
+          <button onClick={handleRegister} className="register-button">
+            Register
           </button>
         </form>
       </div>

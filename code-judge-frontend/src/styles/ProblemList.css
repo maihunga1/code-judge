@@ -1,0 +1,67 @@
+/* ProblemList.css */
+.problem-list {
+  padding: 20px;
+  background-color: #ffffff;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.problem-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  margin: 15px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #fafafa;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.problem-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.problem-item a {
+  text-decoration: none;
+  color: #1a73e8;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.problem-item a:hover {
+  color: #0c47a1;
+}
+
+.problem-item .problem-id {
+  font-size: 0.85em;
+  color: #888888;
+  margin-right: 20px;
+}
+
+.problem-item .problem-difficulty {
+  font-size: 0.85em;
+  padding: 5px 10px;
+  border-radius: 8px;
+  color: #ffffff;
+}
+
+.problem-item .problem-difficulty.easy {
+  background-color: #34a853;
+}
+
+.problem-item .problem-difficulty.medium {
+  background-color: #fbbc05;
+}
+
+.problem-item .problem-difficulty.hard {
+  background-color: #ea4335;
+}
+
+.problem-item-content {
+  display: flex;
+  align-items: center;
+}

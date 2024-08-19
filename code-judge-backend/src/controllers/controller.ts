@@ -7,18 +7,54 @@ import {
   getFileExtByLanguage,
   isLanguage,
 } from "../utils";
+import { ISortAndFilterParams } from "@codingsnack/leetcode-api/lib/models/ISortAndFilterParams";
+import { Leetcode } from "@codingsnack/leetcode-api";
+
+// csrfToken after you've logged in
+const csrfToken =
+  "mB8j4j3DeH1JG3NftAED54DYGiOpYy2pfBEoAmDuB7l60dLZCsHTDJ0N3FoUgJJH";
+// LEETCODE_SESSION after you've logged in
+const session =
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfYXV0aF91c2VyX2lkIjoiMTEzMDc1ODgiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJhbGxhdXRoLmFjY291bnQuYXV0aF9iYWNrZW5kcy5BdXRoZW50aWNhdGlvbkJhY2tlbmQiLCJfYXV0aF91c2VyX2hhc2giOiI0ZWFkM2YzNzUxODNjYzYwOTk2Yzk2MTdlOTg5YTFhZDEwNjFjYzVkYmFkNmMyMWY1MDEyZjRlMmQwNmVlYWVlIiwiaWQiOjExMzA3NTg4LCJlbWFpbCI6Im1haWh1bmdhMkBnbWFpbC5jb20iLCJ1c2VybmFtZSI6Im1haWh1bmdfYWkiLCJ1c2VyX3NsdWciOiJtYWlodW5nX2FpIiwiYXZhdGFyIjoiaHR0cHM6Ly9hc3NldHMubGVldGNvZGUuY29tL3VzZXJzL2F2YXRhcnMvYXZhdGFyXzE2OTg4MzIwMjEucG5nIiwicmVmcmVzaGVkX2F0IjoxNzIzMjcwOTA1LCJpcCI6IjIwMDE6ODAwMzplYzczOjIwMTo1MDk1OjkyZTM6ODBjYjo4YjE0IiwiaWRlbnRpdHkiOiIzNjJkN2ZlM2Q4YjI1ODFiZmZhMzU5ZjBlZWRhNzEwNiIsInNlc3Npb25faWQiOjY3MTkzMjQ4LCJkZXZpY2Vfd2l0aF9pcCI6WyI2ZWJjNWI0MWU3YTNhNDQ5NGU3Mjc3ZDEzZDA2ZjZkNSIsIjIwMDE6ODAwMzplYzczOjIwMTo1MDk1OjkyZTM6ODBjYjo4YjE0Il19.NCmqzBfhSzwg8iAMlppS_JGvvdKvVuGZNvbimJs540U";
+
+const lc = new Leetcode({ csrfToken, session });
 
 const testCaseFilePath = "test-case.txt";
 
 export class CodeJudgeController {
-  public async getAllProblems(req: Request, res: Response): Promise<void> {
-    res.send("List of all problems");
+  public async getAllProblems(req: Request, res: Response) {
+    try {
+      const params: ISortAndFilterParams = {
+        categorySlug: "",
+        skip: 0,
+        limit: 10,
+        filters: {
+          premiumOnly: false,
+          orderBy: "FRONTEND_ID",
+          sortOrder: "ASCENDING",
+        },
+      };
+      const problems = await lc.getProblems(params);
+      return res.json(problems);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
   }
 
-  public getProblemDescription(req: Request, res: Response): void {
-    const { problemID } = req.params;
-    res.send(`Description for problem ${problemID}`);
-  }
+  public getProblemDescription = async (req: Request, res: Response) => {
+    try {
+      const problemTitleSlug = req.params.titleSlug;
+      const problem = await lc.getProblem(problemTitleSlug);
+      if (!problem) {
+        return res.status(404).json({ error: "Problem not found" });
+      }
+      return res.json(problem);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  };
 
   public async createSubmission(req: Request, res: Response): Promise<void> {
     const { problemID, codeFileContent, language: lang } = req.body;

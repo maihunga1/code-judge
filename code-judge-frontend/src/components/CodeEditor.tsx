@@ -4,15 +4,23 @@ import { editor } from "monaco-editor";
 import "../styles/CodeEditor.css";
 
 export interface CodeEditorProps {
-  language: string;
+  titleSlug: string;
+  codeFileContent: string;
+  lang: string;
   onLanguageChange: (language: string) => void;
-  onSubmit: () => void;
+  onSubmit: (data: {
+    titleSlug: string;
+    codeFileContent: string;
+    lang: string;
+  }) => void;
+  onCodeChange: (content: string) => void;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
-  language,
+  lang,
   onLanguageChange,
   onSubmit,
+  onCodeChange,
 }) => {
   const monacoRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
@@ -27,11 +35,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     monacoRef.current = editor;
   }
 
-  // function showValue() {
-  //   if (!monacoRef || !monacoRef.current) return;
-
-  //   alert(monacoRef.current.getValue());
-  // }
+  const handleSubmit = () => {
+    const titleSlug = window.location.pathname.split("/").pop() || "";
+    const codeFileContent = monacoRef.current?.getValue() || "";
+    onSubmit({ titleSlug, codeFileContent, lang });
+  };
 
   function handleLanguageChange(event: React.ChangeEvent<HTMLSelectElement>) {
     onLanguageChange(event.target.value);
@@ -43,6 +51,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     }
   }
 
+  const handleEditorChange = (value: string | undefined) => {
+    onCodeChange(value || "");
+  };
+
   return (
     <div className="editor-container">
       <div className="language-selector">
@@ -51,26 +63,26 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         </label>
         <select
           id="language-select"
-          value={language}
+          value={lang}
           onChange={handleLanguageChange}
         >
           <option value="javascript">JavaScript</option>
-          <option value="typescript">TypeScript</option>
           <option value="python">Python</option>
-          <option value="java">Java</option>
+          <option value="golang">Go</option>
         </select>
       </div>
       <div className="editor-wrapper">
         <Editor
           height="calc(100vh - 160px)"
-          language={language}
+          language={lang}
           defaultValue="// some comment"
           beforeMount={handleEditorWillMount}
           onMount={handleEditorDidMount}
+          onChange={handleEditorChange}
         />
       </div>
       <div className="submit-button-container">
-        <button className="submit-button" onClick={onSubmit}>
+        <button className="submit-button" onClick={handleSubmit}>
           Submit
         </button>
       </div>

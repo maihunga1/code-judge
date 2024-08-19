@@ -15,7 +15,7 @@ export class CodeJudgeRouter {
 
     // Get problem description
     this.router.get(
-      "/problems/:problemID",
+      "/problems/:titleSlug",
       codeJudgeController.getProblemDescription
     );
 

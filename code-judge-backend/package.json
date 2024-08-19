@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@codingsnack/leetcode-api": "^0.0.5",
     "axios": "^1.7.4",
     "express": "^4.19.2",
     "tar-stream": "^3.1.7"

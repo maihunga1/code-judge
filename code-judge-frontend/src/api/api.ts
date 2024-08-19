@@ -40,7 +40,7 @@ async function register(username: string, password: string) {
   }
 }
 
-async function getProblem(titleSlug: string) {
+async function getProblemDescription(titleSlug: string) {
   try {
     const response = await axios.get(`${backendUrl}/problems/${titleSlug}`);
     console.info("Problem fetched successfully:", response.data);
@@ -55,7 +55,7 @@ async function getProblem(titleSlug: string) {
   }
 }
 
-async function getProblemList() {
+async function getAllProblems() {
   try {
     const response = await axios.get(`${backendUrl}/problems`);
     window.console.info("Problems fetched successfully:", response.data);
@@ -71,4 +71,33 @@ async function getProblemList() {
   }
 }
 
-export { getProblem, login, register, getProblemList };
+async function submitSolution(
+  titleSlug: string,
+  codeFileContent: string,
+  lang: string
+) {
+  try {
+    const response = await axios.post(`${backendUrl}/solutions/submit`, {
+      titleSlug,
+      codeFileContent,
+      lang,
+    });
+    console.info("Solution submitted successfully:", response.data);
+    return response.data; // Return the response data (e.g., success message)
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Error submitting solution:", error.response.data);
+    } else {
+      console.error("Error submitting solution:", error);
+    }
+    throw new Error("Failed to submit solution. Please try again later.");
+  }
+}
+
+export {
+  getProblemDescription,
+  login,
+  register,
+  getAllProblems,
+  submitSolution,
+};

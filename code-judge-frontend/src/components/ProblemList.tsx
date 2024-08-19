@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getProblemList } from "../api/api";
+import { getAllProblems } from "../api/api";
 import { IProblem } from "@codingsnack/leetcode-api/lib/models/IProblem";
 import { Link } from "react-router-dom";
 import "../styles/ProblemList.css"; // Import the CSS file
@@ -8,7 +8,7 @@ function ProblemList() {
   const [problemList, setProblemList] = useState<IProblem[]>([]);
 
   useEffect(() => {
-    getProblemList()
+    getAllProblems()
       .then((problems) => setProblemList(problems))
       .catch((error) => console.error(error));
   }, [problemList]);

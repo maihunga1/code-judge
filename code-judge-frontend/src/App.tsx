@@ -4,25 +4,22 @@ import {
   Routes,
   Route,
   Navigate,
-  useParams,
 } from "react-router-dom";
 import axios from "axios";
 import Login from "./components/Login";
-import ProblemComponent from "./components/Problems";
-import CodeEditor, { CodeEditorProps } from "./components/CodeEditor";
-import { AuthProvider } from "./context/AuthContext";
-import Register from "./components/Register";
-import Result from "./components/Result";
 import ProblemList from "./components/ProblemList";
+import Register from "./components/Register";
+import EditorWrapper from "./components/EditorWrapper";
+import { AuthProvider } from "./context/AuthContext";
+import { CodeEditorProps } from "./components/CodeEditor";
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<CodeEditorProps["lang"]>("javascript");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [codeFileContent, setCodeFileContent] = useState<string>("");
 
-  const handleLanguageChange: CodeEditorProps["onLanguageChange"] = (lang) => {
+  const handleLanguageChange = useCallback((lang: CodeEditorProps["lang"]) => {
     setLang(lang);
-  };
+  }, []);
 
   const handleSubmit = useCallback(
     async ({
@@ -32,7 +29,7 @@ const App: React.FC = () => {
     }: {
       titleSlug: string;
       codeFileContent: string;
-      language: string;
+      language: CodeEditorProps["lang"];
     }) => {
       try {
         await axios.post("/submission", {
@@ -40,51 +37,18 @@ const App: React.FC = () => {
           codeFileContent,
           language,
         });
-        setIsSubmitted((prevState: boolean) => !prevState);
+        setIsSubmitted((prevState) => !prevState);
       } catch (error) {
         console.error("Error submitting code:", error);
+        // Consider adding user feedback for errors here
       }
     },
     []
   );
 
   const handleReturn = useCallback(() => {
-    setIsSubmitted((prevState: boolean) => !prevState);
+    setIsSubmitted((prevState) => !prevState);
   }, []);
-
-  const handleCodeChange = (content: string) => {
-    setCodeFileContent(content);
-  };
-
-  const EditorWrapper: React.FC = () => {
-    const { titleSlug } = useParams<{ titleSlug: string }>();
-
-    return (
-      <div className="container">
-        <div className="sidebar">
-          {isSubmitted ? (
-            <Result onReturn={handleReturn} />
-          ) : (
-            <ProblemComponent />
-          )}
-        </div>
-        <CodeEditor
-          titleSlug={titleSlug || ""}
-          codeFileContent={codeFileContent}
-          lang={lang}
-          onLanguageChange={handleLanguageChange}
-          onSubmit={() =>
-            handleSubmit({
-              titleSlug: titleSlug || "",
-              codeFileContent,
-              language: lang,
-            })
-          }
-          onCodeChange={handleCodeChange}
-        />
-      </div>
-    );
-  };
 
   return (
     <AuthProvider>
@@ -94,7 +58,18 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/problems" element={<ProblemList />} />
-          <Route path="/editor/:titleSlug" element={<EditorWrapper />} />
+          <Route
+            path="/problems/:titleSlug"
+            element={
+              <EditorWrapper
+                isSubmitted={isSubmitted}
+                handleReturn={handleReturn}
+                handleSubmit={handleSubmit}
+                lang={lang}
+                handleLanguageChange={handleLanguageChange}
+              />
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>

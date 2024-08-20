@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { getAllProblems } from "../api/api";
 import { IProblem } from "@codingsnack/leetcode-api/lib/models/IProblem";
 import { Link } from "react-router-dom";
-import "../styles/ProblemList.css"; // Import the CSS file
+import "../styles/ProblemList.css";
 
 function ProblemList() {
   const [problemList, setProblemList] = useState<IProblem[]>([]);
@@ -18,7 +18,7 @@ function ProblemList() {
       {problemList.map((problem) => (
         <div key={problem.questionFrontendId} className="problem-item">
           <span className="problem-id">{problem.questionFrontendId}</span>
-          <Link to={`/editor/${problem.titleSlug}`}>{problem.titleSlug}</Link>
+          <Link to={`/problems/${problem.titleSlug}`}>{problem.titleSlug}</Link>
           <span
             className={`problem-difficulty ${problem.difficulty.toLowerCase()}`}
           >

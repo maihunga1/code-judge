@@ -4,7 +4,7 @@ const backendUrl = "http://localhost:3000";
 
 async function login(username: string, password: string) {
   try {
-    const response = await axios.post(`${backendUrl}/auth/login`, {
+    const response = await axios.post(`${backendUrl}/login`, {
       username,
       password,
     });
@@ -24,7 +24,7 @@ async function login(username: string, password: string) {
 
 async function register(username: string, password: string) {
   try {
-    const response = await axios.post(`${backendUrl}/auth/register`, {
+    const response = await axios.post(`${backendUrl}/register`, {
       username,
       password,
     });
@@ -77,7 +77,7 @@ async function submitSolution(
   lang: string
 ) {
   try {
-    const response = await axios.post(`${backendUrl}/solutions/submit`, {
+    const response = await axios.post(`${backendUrl}/submissions`, {
       titleSlug,
       codeFileContent,
       lang,

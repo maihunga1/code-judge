@@ -1,7 +1,11 @@
 import express, { Express } from "express";
+import cors from "cors";
 import { codeJudgeRouter } from "./routes";
 
 const app: Express = express();
+
+app.use(cors());
+
 const port = process.env.PORT || 3000;
 
 app.use(express.json());

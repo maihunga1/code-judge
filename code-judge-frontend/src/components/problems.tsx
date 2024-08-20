@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProblem } from "../api/api";
+import { getProblemDescription } from "../api/api";
 import DOMPurify from "dompurify";
 import { IProblem } from "@codingsnack/leetcode-api/lib/models/IProblem";
 import { useParams } from "react-router-dom";
@@ -10,7 +10,7 @@ function Problems() {
 
   useEffect(() => {
     if (titleSlug) {
-      getProblem(titleSlug)
+      getProblemDescription(titleSlug)
         .then((problem) => setProblem(problem))
         .catch((error) => console.error(error));
     }

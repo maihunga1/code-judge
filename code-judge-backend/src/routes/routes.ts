@@ -10,6 +10,12 @@ export class CodeJudgeRouter {
   }
 
   private initializeRoutes(): void {
+    //login
+    this.router.post("/login", codeJudgeController.loginUser);
+
+    //register
+    this.router.post("/register", codeJudgeController.registerUser);
+
     // Get all problems
     this.router.get("/problems", codeJudgeController.getAllProblems);
 

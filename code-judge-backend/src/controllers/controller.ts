@@ -9,6 +9,7 @@ import {
 } from "../utils";
 import { ISortAndFilterParams } from "@codingsnack/leetcode-api/lib/models/ISortAndFilterParams";
 import { Leetcode } from "@codingsnack/leetcode-api";
+import jwt from "jsonwebtoken";
 
 // csrfToken after you've logged in
 const csrfToken =
@@ -21,7 +22,31 @@ const lc = new Leetcode({ csrfToken, session });
 
 const testCaseFilePath = "test-case.txt";
 
+const users = [
+  {
+    username: "admin",
+    password: "admin",
+  },
+];
+
 export class CodeJudgeController {
+  public loginUser = (req: Request, res: Response) => {
+    const { username, password } = req.body;
+
+    if (username === "admin" && password === "admin") {
+      const token = jwt.sign(
+        { username },
+        process.env.JWT_SECRET || "default_secret",
+        {
+          expiresIn: "1h",
+        }
+      );
+      return res.json({ message: "Successfully logged in", token });
+    }
+
+    return res.status(401).json({ message: "Invalid credentials" });
+  };
+
   public async getAllProblems(req: Request, res: Response) {
     try {
       const params: ISortAndFilterParams = {
@@ -41,6 +66,18 @@ export class CodeJudgeController {
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }
+
+  public registerUser = (req: Request, res: Response) => {
+    const { username, password } = req.body;
+
+    const userExists = users.some((u) => u.username === username);
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    users.push({ username, password });
+    return res.status(201).json({ message: "User registered successfully" });
+  };
 
   public getProblemDescription = async (req: Request, res: Response) => {
     try {

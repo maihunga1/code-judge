@@ -11,7 +11,7 @@ function ProblemList() {
     getAllProblems()
       .then((problems) => setProblemList(problems))
       .catch((error) => console.error(error));
-  }, [problemList]);
+  }, []);
 
   return (
     <div className="problem-list">

@@ -94,10 +94,10 @@ export class CodeJudgeController {
   };
 
   public async createSubmission(req: Request, res: Response): Promise<void> {
-    const { problemID, codeFileContent, language: lang } = req.body;
+    const { titleSlug, codeFileContent, lang } = req.body;
 
     // TODO: move validation logic to a separate function
-    if (typeof problemID !== "string") {
+    if (typeof titleSlug !== "string") {
       res.status(400).send("problemID must be a string");
       return;
     }
@@ -125,7 +125,7 @@ export class CodeJudgeController {
 
     const testFileBufferEntry: BufferEntry = {
       fileName: testCaseFilePath,
-      content: fileService.getFileTestCasePath(problemID),
+      content: fileService.getFileTestCasePath(titleSlug),
       type: "filePath",
     };
 

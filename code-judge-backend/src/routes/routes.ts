@@ -35,3 +35,5 @@ export class CodeJudgeRouter {
 }
 
 export const codeJudgeRouter = new CodeJudgeRouter().getRouter();
+
+

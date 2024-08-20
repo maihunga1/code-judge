@@ -5,21 +5,24 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import axios from "axios";
 import Login from "./components/Login";
 import ProblemList from "./components/ProblemList";
 import Register from "./components/Register";
 import EditorWrapper from "./components/EditorWrapper";
 import { AuthProvider } from "./context/AuthContext";
 import { CodeEditorProps } from "./components/CodeEditor";
+import { submitSolution } from "./api/api";
 
 const App: React.FC = () => {
-  const [lang, setLang] = useState<CodeEditorProps["lang"]>("javascript");
+  const [lang, setLang] = useState<CodeEditorProps["language"]>("javascript");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  const handleLanguageChange = useCallback((lang: CodeEditorProps["lang"]) => {
-    setLang(lang);
-  }, []);
+  const handleLanguageChange = useCallback(
+    (lang: CodeEditorProps["language"]) => {
+      setLang(lang);
+    },
+    []
+  );
 
   const handleSubmit = useCallback(
     async ({
@@ -29,18 +32,14 @@ const App: React.FC = () => {
     }: {
       titleSlug: string;
       codeFileContent: string;
-      language: CodeEditorProps["lang"];
+      language: string;
     }) => {
       try {
-        await axios.post("/submission", {
-          titleSlug,
-          codeFileContent,
-          language,
-        });
+        await submitSolution(titleSlug, codeFileContent, language);
+        console.log(titleSlug, codeFileContent, language);
         setIsSubmitted((prevState) => !prevState);
       } catch (error) {
         console.error("Error submitting code:", error);
-        // Consider adding user feedback for errors here
       }
     },
     []
@@ -77,3 +76,9 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+//bugs in submitSolution
+
+//next task is to write test cases for each problems
+//then store in S3 bucket
+//then deploy the frontend and backend in AWS

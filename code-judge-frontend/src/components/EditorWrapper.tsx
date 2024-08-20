@@ -7,11 +7,7 @@ import Result from "./Result";
 interface EditorWrapperProps {
   isSubmitted: boolean;
   handleReturn: () => void;
-  handleSubmit: ({
-    titleSlug,
-    codeFileContent,
-    language,
-  }: {
+  handleSubmit: (data: {
     titleSlug: string;
     codeFileContent: string;
     language: string;
@@ -24,13 +20,16 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
   ({ isSubmitted, handleReturn, handleSubmit, lang, handleLanguageChange }) => {
     const { titleSlug = "" } = useParams<{ titleSlug?: string }>();
 
-    const handleSubmitCallback = useCallback(() => {
-      handleSubmit({
-        titleSlug,
-        codeFileContent: "", // The content will be retrieved inside the CodeEditor component
-        language: lang,
-      });
-    }, [handleSubmit, titleSlug, lang]);
+    const handleSubmitCallback = useCallback(
+      (data: {
+        titleSlug: string;
+        codeFileContent: string;
+        language: string;
+      }) => {
+        handleSubmit(data);
+      },
+      [handleSubmit]
+    );
 
     return (
       <div className="container">
@@ -43,7 +42,7 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
         </div>
         <CodeEditor
           titleSlug={titleSlug}
-          lang={lang}
+          language={lang}
           onLanguageChange={handleLanguageChange}
           onSubmit={handleSubmitCallback}
         />

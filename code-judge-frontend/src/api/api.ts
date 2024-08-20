@@ -29,7 +29,7 @@ async function register(username: string, password: string) {
       password,
     });
     console.info("Registration successful:", response.data);
-    return response.data; // Return the response data (e.g., success message)
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Registration failed:", error.response.data);
@@ -74,16 +74,16 @@ async function getAllProblems() {
 async function submitSolution(
   titleSlug: string,
   codeFileContent: string,
-  lang: string
+  language: string
 ) {
   try {
     const response = await axios.post(`${backendUrl}/submissions`, {
       titleSlug,
       codeFileContent,
-      lang,
+      language,
     });
     console.info("Solution submitted successfully:", response.data);
-    return response.data; // Return the response data (e.g., success message)
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error submitting solution:", error.response.data);

@@ -26,7 +26,7 @@ const App: React.FC = () => {
 
   const handleSubmit = useCallback(
     async ({
-      titleSlug,
+      titleSlug = "1",
       codeFileContent,
       language,
     }: {
@@ -81,4 +81,5 @@ export default App;
 
 //next task is to write test cases for each problems
 //then store in S3 bucket
+//fetch from S3 and populate for the problem
 //then deploy the frontend and backend in AWS

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import "../styles/CodeEditor.css";
@@ -12,10 +12,11 @@ export interface CodeEditorProps {
     codeFileContent: string;
     language: string;
   }) => void;
+  onCodeChange: (content: string) => void; // New prop
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = React.memo(
-  ({ language, onLanguageChange, onSubmit, titleSlug }) => {
+  ({ language, onLanguageChange, onSubmit, titleSlug, onCodeChange }) => {
     const monacoRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
     function handleEditorWillMount(monaco: Monaco) {
@@ -27,6 +28,14 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
       monaco: Monaco
     ) {
       monacoRef.current = editor;
+
+      // Handle code changes
+      editor.onDidChangeModelContent(() => {
+        if (monacoRef.current) {
+          const content = monacoRef.current.getValue();
+          onCodeChange(content); // Notify parent of code changes
+        }
+      });
     }
 
     const handleSubmit = () => {
@@ -61,14 +70,14 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
           >
             <option value="javascript">JavaScript</option>
             <option value="python">Python</option>
-            <option value="golang">Go</option>
+            <option value="go">Go</option>
           </select>
         </div>
         <div className="editor-wrapper">
           <Editor
             height="calc(100vh - 160px)"
             language={language}
-            defaultValue="// Write your code here"
+            defaultValue={`const fs = require('fs');\n\nconst testCaseFilePath = 'test-case.txt';\n\nfunction addTwoNumbers(a, b) {\n    return a + b;\n}\n\nfs.readFile(testCaseFilePath, 'utf8', (err, data) => {\n    if (err) {\n        throw err;\n    }\n\n    const lines = data.trim().split('\\n');\n\n    for (let line of lines) {\n        const [aStr, bStr, expectedStr] = line.split(' ');\n\n        const a = parseInt(aStr, 10);\n        const b = parseInt(bStr, 10);\n        const expected = parseInt(expectedStr, 10);\n\n        const result = addTwoNumbers(a, b);\n\n        if (expected !== result) {\n            console.log(\`a = \${a}, b = \${b}\`);\n            console.log(\`expected \${expected}, got \${result}\`);\n            break;\n        }\n    }\n});`}
             beforeMount={handleEditorWillMount}
             onMount={handleEditorDidMount}
           />

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import MemoizedProblemComponent from "./Problems";
 import CodeEditor from "./CodeEditor";
@@ -19,6 +19,7 @@ interface EditorWrapperProps {
 const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
   ({ isSubmitted, handleReturn, handleSubmit, lang, handleLanguageChange }) => {
     const { titleSlug = "" } = useParams<{ titleSlug?: string }>();
+    const [codeFileContent, setCodeFileContent] = useState<string>("");
 
     const handleSubmitCallback = useCallback(
       (data: {
@@ -31,11 +32,20 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
       [handleSubmit]
     );
 
+    const handleCodeChange = useCallback((content: string) => {
+      setCodeFileContent(content);
+    }, []);
+
     return (
       <div className="container">
         <div className="sidebar">
           {isSubmitted ? (
-            <Result onReturn={handleReturn} />
+            <Result
+              onReturn={handleReturn}
+              titleSlug={titleSlug}
+              codeFileContent={codeFileContent}
+              language={lang}
+            />
           ) : (
             <MemoizedProblemComponent />
           )}
@@ -44,7 +54,10 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
           titleSlug={titleSlug}
           language={lang}
           onLanguageChange={handleLanguageChange}
-          onSubmit={handleSubmitCallback}
+          onSubmit={(data) =>
+            handleSubmitCallback({ ...data, codeFileContent })
+          }
+          onCodeChange={handleCodeChange} // Pass the handler to CodeEditor
         />
       </div>
     );

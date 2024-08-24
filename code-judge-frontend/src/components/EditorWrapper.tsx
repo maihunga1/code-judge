@@ -27,12 +27,14 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
         codeFileContent: string;
         language: string;
       }) => {
+        console.log(data);
         handleSubmit(data);
       },
       [handleSubmit]
     );
 
     const handleCodeChange = useCallback((content: string) => {
+      console.log("handleCodeChange", content);
       setCodeFileContent(content);
     }, []);
 
@@ -54,9 +56,7 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
           titleSlug={titleSlug}
           language={lang}
           onLanguageChange={handleLanguageChange}
-          onSubmit={(data) =>
-            handleSubmitCallback({ ...data, codeFileContent })
-          }
+          onSubmit={(data) => handleSubmitCallback({ ...data })}
           onCodeChange={handleCodeChange} // Pass the handler to CodeEditor
         />
       </div>

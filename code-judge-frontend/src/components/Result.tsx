@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { submitSolution } from "../api/api";
+import { title } from "process";
 
 // Adjust the ResultProps if necessary to accept parameters or pass required values
 interface ResultProps {
@@ -37,7 +38,7 @@ const Result: React.FC<ResultProps> = ({
     };
 
     fetchResults();
-  }, []);
+  }, [language, titleSlug]);
 
   return (
     <div>

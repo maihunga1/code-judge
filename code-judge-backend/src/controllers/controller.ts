@@ -94,7 +94,7 @@ export class CodeJudgeController {
   };
 
   public async createSubmission(req: Request, res: Response): Promise<void> {
-    const { titleSlug, codeFileContent, lang } = req.body;
+    const { titleSlug, codeFileContent, language: lang } = req.body;
 
     // TODO: move validation logic to a separate function
     if (typeof titleSlug !== "string") {

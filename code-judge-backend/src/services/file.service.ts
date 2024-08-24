@@ -37,8 +37,8 @@ class FileService {
     return `./problems/${problemID}/test-case.txt`;
   }
 
-  getFileCodeTemplatePath(problemID: string, lang: Language): string {
-    const ext = getFileExtByLanguage[lang];
+  getFileCodeTemplatePath(problemID: string, language: Language): string {
+    const ext = getFileExtByLanguage[language];
 
     return `./problems/${problemID}/code_template.${ext}`;
   }

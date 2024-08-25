@@ -8,43 +8,36 @@ import {
   isLanguage,
 } from "../utils";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import path from "path";
 import fs from "fs";
-import { User } from "../model/User";
-
+import { userService } from "../services/userService";
 
 const testCaseFilePath = "test-case.txt";
-
-const users = [
-  {
-    username: "admin",
-    password: "admin",
-  },
-];
 
 export class CodeJudgeController {
   public loginUser = async (req: Request, res: Response) => {
     const { username, password } = req.body;
 
     try {
-      const user = await User.findOne({ username });
+      const user = await userService.findUserByUsername(username);
       if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      const isMatch = await user.comparePassword(password);
+      const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        return res.status(401).json({ message: 'Invalid credentials' });
       }
 
       const token = jwt.sign(
         { username: user.username },
-        process.env.JWT_SECRET || "default_secret",
-        { expiresIn: "1h" }
+        process.env.JWT_SECRET || 'default_secret',
+        { expiresIn: '1h' }
       );
-      return res.json({ message: "Successfully logged in", token });
+      return res.json({ message: 'Successfully logged in', token });
     } catch (error) {
-      return res.status(500).json({ message: "Server error" });
+      return res.status(500).json({ message: 'Server error', error });
     }
   };
 
@@ -52,16 +45,15 @@ export class CodeJudgeController {
     const { username, password } = req.body;
 
     try {
-      const userExists = await User.findOne({ username });
-      if (userExists) {
-        return res.status(400).json({ message: "User already exists" });
+      const existingUser = await userService.findUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ message: 'User already exists' });
       }
 
-      const newUser = new User({ username, password });
-      await newUser.save();
-      return res.status(201).json({ message: "User registered successfully" });
+      await userService.createUser(username, password);
+      return res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-      return res.status(500).json({ message: "Server error" });
+      return res.status(500).json({ message: 'Server error', error });
     }
   };
 

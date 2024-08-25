@@ -1,16 +1,14 @@
 import express, { Express } from "express";
 import cors from "cors";
 import { codeJudgeRouter } from "./routes";
-import mongoose from "mongoose";
+import { createTable } from "./utils/dynamoDbClient";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app: Express = express();
 
-const db = process.env.MONGO_URI || "mongodb://localhost:27017/code-judge";
+createTable();
 
-mongoose
-  .connect(db)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
 
 app.use(cors());
 

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { getProblemDescription } from "../api/api";
 import DOMPurify from "dompurify";
-import { IProblem } from "@codingsnack/leetcode-api/lib/models/IProblem";
 import { useParams } from "react-router-dom";
 import React from "react";
 
 const Problems: React.FC = React.memo(() => {
   const { titleSlug } = useParams<{ titleSlug: string }>();
-  const [problem, setProblem] = useState<IProblem | null>(null);
+  const [problem, setProblem] = useState<any>(null);
 
   useEffect(() => {
     console.log(titleSlug);
@@ -23,7 +22,7 @@ const Problems: React.FC = React.memo(() => {
   return (
     <div
       dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize(problem?.content || ""),
+        __html: DOMPurify.sanitize(problem),
       }}
     />
   );

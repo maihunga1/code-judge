@@ -60,7 +60,7 @@ async function getAllProblems() {
     const response = await axios.get(`${backendUrl}/problems`);
     window.console.info("Problems fetched successfully:", response.data);
 
-    return response.data.questions;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error fetching problem:", error.response.data);

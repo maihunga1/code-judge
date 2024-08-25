@@ -10,6 +10,7 @@ import {
 import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
+import { User } from "../model/User";
 
 
 const testCaseFilePath = "test-case.txt";
@@ -22,21 +23,46 @@ const users = [
 ];
 
 export class CodeJudgeController {
-  public loginUser = (req: Request, res: Response) => {
+  public loginUser = async (req: Request, res: Response) => {
     const { username, password } = req.body;
 
-    if (username === "admin" && password === "admin") {
+    try {
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
       const token = jwt.sign(
-        { username },
+        { username: user.username },
         process.env.JWT_SECRET || "default_secret",
-        {
-          expiresIn: "1h",
-        }
+        { expiresIn: "1h" }
       );
       return res.json({ message: "Successfully logged in", token });
+    } catch (error) {
+      return res.status(500).json({ message: "Server error" });
     }
+  };
 
-    return res.status(401).json({ message: "Invalid credentials" });
+  public registerUser = async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+
+    try {
+      const userExists = await User.findOne({ username });
+      if (userExists) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+
+      const newUser = new User({ username, password });
+      await newUser.save();
+      return res.status(201).json({ message: "User registered successfully" });
+    } catch (error) {
+      return res.status(500).json({ message: "Server error" });
+    }
   };
 
   public async getAllProblems(req: Request, res: Response) {
@@ -71,17 +97,6 @@ export class CodeJudgeController {
     }
   }
 
-  public registerUser = (req: Request, res: Response) => {
-    const { username, password } = req.body;
-
-    const userExists = users.some((u) => u.username === username);
-    if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    users.push({ username, password });
-    return res.status(201).json({ message: "User registered successfully" });
-  };
 
   public getProblemDescription = async (req: Request, res: Response) => {
     const { titleSlug } = req.params;

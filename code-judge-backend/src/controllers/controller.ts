@@ -10,7 +10,6 @@ import {
 import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
-import { User } from "../model/User";
 
 
 const testCaseFilePath = "test-case.txt";
@@ -30,24 +29,22 @@ export class CodeJudgeController {
     const { username, password } = req.body;
 
     try {
-      const user = await User.findOne({ username });
-      if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+      // Find the user in the hardcoded users array
+      const user = users.find(user => user.username === username);
+      if (!user || user.password !== password) {
+        return res.status(401).json({ message: 'Invalid credentials' });
       }
 
-      const isMatch = await user.comparePassword(password);
-      if (!isMatch) {
-        return res.status(401).json({ message: "Invalid credentials" });
-      }
-
+      // Generate a token for the user
       const token = jwt.sign(
         { username: user.username },
-        process.env.JWT_SECRET || "default_secret",
-        { expiresIn: "1h" }
+        process.env.JWT_SECRET || 'default_secret',
+        { expiresIn: '1h' }
       );
-      return res.json({ message: "Successfully logged in", token });
+      return res.json({ message: 'Successfully logged in', token });
     } catch (error) {
-      return res.status(500).json({ message: "Server error" });
+      console.error('Error during login:', error);
+      return res.status(500).json({ message: 'Server error' });
     }
   };
 
@@ -55,16 +52,19 @@ export class CodeJudgeController {
     const { username, password } = req.body;
 
     try {
-      const userExists = await User.findOne({ username });
+      // Check if the user already exists in the hardcoded users array
+      const userExists = users.some(user => user.username === username);
       if (userExists) {
-        return res.status(400).json({ message: "User already exists" });
+        return res.status(400).json({ message: 'User already exists' });
       }
 
-      const newUser = new User({ username, password });
-      await newUser.save();
-      return res.status(201).json({ message: "User registered successfully" });
+      // Since this is a hardcoded list, we won't actually "save" the user
+      // Instead, just pretend that the user was saved successfully
+      users.push({ username, password });
+      return res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-      return res.status(500).json({ message: "Server error" });
+      console.error('Error during registration:', error);
+      return res.status(500).json({ message: 'Server error' });
     }
   };
 
@@ -120,6 +120,21 @@ export class CodeJudgeController {
       }
 
       // Send the file content as the response
+      res.status(200).send(data);
+    });
+  };
+
+  public getSample = async (req: Request, res: Response) => {
+    const { titleSlug } = req.params;
+
+    const filePath = path.join(__dirname, '..', '..', `problems/${titleSlug}/sample.txt`);
+
+    fs.readFile(filePath, "utf8", (err, data) => {
+      if (err) {
+        console.error("Error reading file:", err);
+        return res.status(500).json({ error: "Failed to read sample" });
+      }
+
       res.status(200).send(data);
     });
   };

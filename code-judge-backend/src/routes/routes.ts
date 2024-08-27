@@ -25,6 +25,9 @@ export class CodeJudgeRouter {
       codeJudgeController.getProblemDescription
     );
 
+    //Get sample
+    this.router.get("/problems/:titleSlug/sample", codeJudgeController.getSample);
+
     // Create a new submission
     this.router.post("/submissions", codeJudgeController.createSubmission);
   }

@@ -37,8 +37,8 @@ export class DockerService {
     } catch (error) {
       throw new Error(
         "Error fetching Docker version " +
-          error +
-          "\n Docker is likely not running"
+        error +
+        "\n Docker is likely not running"
       );
     }
   }

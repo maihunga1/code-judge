@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import "../styles/CodeEditor.css";
+import { getSample } from "../api/api";
 
 export interface CodeEditorProps {
   titleSlug: string;
@@ -18,6 +19,7 @@ export interface CodeEditorProps {
 const CodeEditor: React.FC<CodeEditorProps> = React.memo(
   ({ language, onLanguageChange, onSubmit, titleSlug, onCodeChange }) => {
     const monacoRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+    const [sample, setSample] = React.useState<string>("");
 
     function handleEditorWillMount(monaco: Monaco) {
       monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
@@ -57,6 +59,14 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
       }
     }
 
+    useEffect(() => {
+      if (titleSlug) {
+        getSample(titleSlug)
+          .then((sample) => setSample(sample))
+          .catch((error) => console.error(error));
+      }
+    }, [titleSlug]);
+
     return (
       <div className="editor-container">
         <div className="language-selector">
@@ -77,7 +87,7 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
           <Editor
             height="calc(100vh - 160px)"
             language={language}
-            defaultValue={`const fs = require('fs');\n\nconst testCaseFilePath = 'test-case.txt';\n\nfunction addTwoNumbers(a, b) {\n    return a + b;\n}\n\nfs.readFile(testCaseFilePath, 'utf8', (err, data) => {\n    if (err) {\n        throw err;\n    }\n\n    const lines = data.trim().split('\\n');\n\n    for (let line of lines) {\n        const [aStr, bStr, expectedStr] = line.split(' ');\n\n        const a = parseInt(aStr, 10);\n        const b = parseInt(bStr, 10);\n        const expected = parseInt(expectedStr, 10);\n\n        const result = addTwoNumbers(a, b);\n\n        if (expected !== result) {\n            console.log(\`a = \${a}, b = \${b}\`);\n            console.log(\`expected \${expected}, got \${result}\`);\n            break;\n        }\n    }\n});`}
+            defaultValue={sample}
             beforeMount={handleEditorWillMount}
             onMount={handleEditorDidMount}
           />
@@ -87,6 +97,7 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
             Submit
           </button>
         </div>
+        <div className="fetched-data">{/* Display fetched data here */}</div>
       </div>
     );
   }

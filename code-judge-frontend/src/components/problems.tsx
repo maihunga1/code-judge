@@ -9,7 +9,6 @@ const Problems: React.FC = React.memo(() => {
   const [problem, setProblem] = useState<any>(null);
 
   useEffect(() => {
-    console.log(titleSlug);
     if (titleSlug) {
       getProblemDescription(titleSlug)
         .then((problem) => setProblem(problem))

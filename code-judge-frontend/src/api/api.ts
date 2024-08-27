@@ -55,6 +55,21 @@ async function getProblemDescription(titleSlug: string) {
   }
 }
 
+async function getSample(titleSlug: string) {
+  try {
+    const response = await axios.get(`${backendUrl}/problems/${titleSlug}/sample`);
+    console.info("Sample fetched successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("Error fetching sample:", error.response.data);
+    } else {
+      console.error("Error fetching sample:", error);
+    }
+    throw new Error("Failed to fetch sample. Please try again later.");
+  }
+}
+
 async function getAllProblems() {
   try {
     const response = await axios.get(`${backendUrl}/problems`);
@@ -100,4 +115,5 @@ export {
   register,
   getAllProblems,
   submitSolution,
+  getSample,
 };

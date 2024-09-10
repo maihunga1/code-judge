@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = "http://localhost:3000";
+const backendUrl = "http://ec2-3-106-143-64.ap-southeast-2.compute.amazonaws.com:3000";
 
 async function login(username: string, password: string) {
   try {
@@ -9,7 +9,25 @@ async function login(username: string, password: string) {
       password,
     });
     console.info("Login successful:", response.data);
-    return response.data; // Return the response data (e.g., token)
+
+    const { message, token } = response.data;
+
+    if (!token) {
+      throw new Error("Invalid response from server: No token provided");
+    }
+
+    // Extract username from JWT token
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const returnedUsername = payload.username;
+
+    if (!returnedUsername) {
+      throw new Error("Invalid token: No username found");
+    }
+
+    return {
+      token,
+      user: { username: returnedUsername }
+    };
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Login failed:", error.response.data);

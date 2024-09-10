@@ -1,7 +1,6 @@
 import express, { Express } from "express";
 import cors from "cors";
 import { codeJudgeRouter } from "./routes";
-// import { createTable } from "./utils/dynamoDbClient";
 import dotenv from "dotenv";
 
 const app: Express = express();

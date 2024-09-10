@@ -57,7 +57,7 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
           language={lang}
           onLanguageChange={handleLanguageChange}
           onSubmit={(data) => handleSubmitCallback({ ...data })}
-          onCodeChange={handleCodeChange} // Pass the handler to CodeEditor
+          onCodeChange={handleCodeChange}
         />
       </div>
     );

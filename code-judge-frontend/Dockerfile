@@ -1,10 +1,10 @@
-# Use an official Node.js runtime as a parent image
-FROM node:20
+# Stage 1: Build the React application with Vite
+FROM node:20 AS build
 
-# Set the working directory
-WORKDIR /usr/src/app
+# Set the working directory inside the container
+WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json (if present)
 COPY package*.json ./
 
 # Install dependencies
@@ -13,14 +13,20 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
+# Build the React application
 RUN npm run build
 
-# Install a simple HTTP server to serve static content
+# Stage 2: Serve the built application using a lightweight server
+FROM node:20-alpine AS serve
+
+# Install serve globally to serve the build directory
 RUN npm install -g serve
 
-# Expose the port the app runs on
-EXPOSE 3001
+# Copy the build output from the previous stage
+COPY --from=build /app/dist /app/dist
 
-# Start the app
-CMD ["serve", "-s", "build"]
+# Expose the port that the application will run on
+EXPOSE 80
+
+# Command to serve the built application
+CMD ["serve", "-s", "/app/dist", "-l", "80"]

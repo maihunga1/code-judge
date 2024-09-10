@@ -1,0 +1,7 @@
+<p>The Fibonacci sequence is the series of numbers where each number is the sum of the two preceding numbers. For example,</p>
+
+<p>0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, &hellip;</p>
+
+<p>Mathematically we can describe this as:</p>
+
+<p><em>x<sub>n</sub> = x<sub>n-1</sub> + x<sub>n-2</sub></em></p>

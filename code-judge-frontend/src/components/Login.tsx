@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { login as loginApi } from "../api/api";
@@ -8,16 +8,24 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/problems");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const data = await loginApi(username, password);
-      login(data.token);
-      navigate("/problems");
+      const payload = JSON.parse(atob(data.token.split(".")[1]));
+      const user = { username: payload.username };
+      login(data.token, user);
     } catch (err) {
+      console.error("Login error:", err);
       setError("Invalid credentials");
     }
   };
@@ -55,8 +63,11 @@ const Login = () => {
           <button type="submit" className="login-button">
             Login
           </button>
-
-          <button onClick={handleRegister} className="register-button">
+          <button
+            type="button"
+            onClick={handleRegister}
+            className="register-button"
+          >
             Register
           </button>
         </form>

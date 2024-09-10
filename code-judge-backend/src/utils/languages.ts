@@ -17,8 +17,8 @@ export const getFileExtByLanguage: Record<Language, languageExt> = {
 };
 
 export const dockerImageByLanguage: { [key in Language]: dockerImage } = {
-  go: { name: "golang", tag: "alpine3.20" },
-  javascript: { name: "node", tag: "lts-bookworm-slim" },
+  go: { name: "golang", tag: "latest" },
+  javascript: { name: "node", tag: "latest" },
   python: { name: "python", tag: "3.9-bullseye" },
 };
 

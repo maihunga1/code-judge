@@ -1,0 +1,59 @@
+# Function to solve the two-sum problem
+def two_sum(nums, target):
+    # Enter your solution here
+    pass
+
+# Function to parse the saved test cases from a file
+def parse_test_cases(file_content):
+    test_cases = file_content.strip().split("\n\n")  # Split into individual test cases
+
+    parsed_cases = []
+    for test_case in test_cases:
+        lines = test_case.strip().split("\n")
+
+        # Parse nums
+        nums = list(map(int, lines[0].strip().split()))
+
+        # Parse target
+        target = int(lines[1].strip())
+
+        # Parse expected result
+        if len(lines) > 2 and lines[2].strip():
+            result = list(map(int, lines[2].strip().split(", ")))
+        else:
+            result = []
+
+        parsed_cases.append({"nums": nums, "target": target, "result": result})
+
+    return parsed_cases
+
+# Helper function to compare two arrays for equality
+def arrays_are_equal(arr1, arr2):
+    return arr1 == arr2
+
+# Function to read and test the cases from the file
+def read_and_test_cases(txt_filename="test-case.txt"):
+    with open(txt_filename, "r", encoding="utf-8") as file:
+        file_content = file.read()
+
+    test_cases = parse_test_cases(file_content)
+
+    for index, test_case in enumerate(test_cases):
+        nums = test_case["nums"]
+        target = test_case["target"]
+        expected_result = test_case["result"]
+
+        output = two_sum(nums, target)
+
+        if not arrays_are_equal(output, expected_result):
+            print(f"Test case {index + 1} failed:")
+            print(f"  Input nums: {nums}")
+            print(f"  Target: {target}")
+            print(f"  Expected: {expected_result}")
+            print(f"  Got: {output}")
+            return  # Exit after printing the first failed test case
+
+    print("All test cases passed.")
+
+# Example usage: Run tests from the file
+read_and_test_cases("test-case.txt")

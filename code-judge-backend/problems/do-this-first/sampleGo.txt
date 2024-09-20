@@ -1,0 +1,68 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+	"strconv"
+	"strings"
+)
+
+func addTwoNumbers(a int, b int) int {
+	// Enter your code here ...
+}
+
+func main() {
+	testCaseFilePath := "test-case.txt"
+
+	// Open the test case file
+	file, err := os.Open(testCaseFilePath)
+	if err != nil {
+		log.Fatalf("Failed to open file: %s", err)
+	}
+	defer file.Close()
+
+	// Read file line by line
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+
+		// Split the line into a, b, and expected values
+		parts := strings.Split(line, " ")
+		if len(parts) != 3 {
+			log.Fatalf("Invalid test case format: %s", line)
+		}
+
+		a, err := strconv.Atoi(parts[0])
+		if err != nil {
+			log.Fatalf("Failed to parse a: %s", err)
+		}
+
+		b, err := strconv.Atoi(parts[1])
+		if err != nil {
+			log.Fatalf("Failed to parse b: %s", err)
+		}
+
+		expected, err := strconv.Atoi(parts[2])
+		if err != nil {
+			log.Fatalf("Failed to parse expected: %s", err)
+		}
+
+		// Call the addTwoNumbers function and compare the result
+		result := addTwoNumbers(a, b)
+		if result != expected {
+			fmt.Printf("Test failed: a = %d, b = %d\n", a, b)
+			fmt.Printf("Expected %d, got %d\n", expected, result)
+			break
+		}
+	}
+
+	// Check for scanner errors
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("Failed to read file: %s", err)
+	}
+}

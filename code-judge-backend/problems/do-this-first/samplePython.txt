@@ -1,0 +1,39 @@
+def add_two_numbers(a, b):
+    # Enter your code here ...
+
+def main():
+    test_case_file_path = "test-case.txt"
+
+    try:
+        with open(test_case_file_path, 'r') as file:
+            lines = file.readlines()
+
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+
+                # Split the line into a, b, and expected values
+                parts = line.split()
+                if len(parts) != 3:
+                    print(f"Invalid test case format: {line}")
+                    continue
+
+                a = int(parts[0])
+                b = int(parts[1])
+                expected = int(parts[2])
+
+                # Call the add_two_numbers function and compare the result
+                result = add_two_numbers(a, b)
+                if result != expected:
+                    print(f"Test failed: a = {a}, b = {b}")
+                    print(f"Expected {expected}, got {result}")
+                    break
+
+    except FileNotFoundError:
+        print(f"File {test_case_file_path} not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == "__main__":
+    main()

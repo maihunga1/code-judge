@@ -1,0 +1,84 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+// Function to calculate the nth Fibonacci number
+func fibonacci(n int) int {
+	// Enter your Fibonacci logic here
+}
+
+// Function to parse the saved Fibonacci test cases from a file
+func parseFibonacciTestCases(fileContent string) []struct {
+	n              int
+	expectedResult int
+} {
+	testCases := strings.Split(strings.TrimSpace(fileContent), "\n\n") // Split into individual test cases
+	var parsedCases []struct {
+		n              int
+		expectedResult int
+	}
+
+	for _, testCase := range testCases {
+		lines := strings.Split(strings.TrimSpace(testCase), "\n")
+		n, _ := strconv.Atoi(strings.TrimSpace(lines[0]))
+		expectedResult, _ := strconv.Atoi(strings.TrimSpace(lines[1]))
+
+		parsedCases = append(parsedCases, struct {
+			n              int
+			expectedResult int
+		}{n: n, expectedResult: expectedResult})
+	}
+
+	return parsedCases
+}
+
+// Function to read test cases from a file and test the Fibonacci function
+func testFibonacciFromFile(txtFilename string) {
+	// Read the file
+	file, err := os.Open(txtFilename)
+	if err != nil {
+		fmt.Printf("Error opening file: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	// Read the entire content of the file
+	scanner := bufio.NewScanner(file)
+	var fileContent string
+	for scanner.Scan() {
+		fileContent += scanner.Text() + "\n"
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Printf("Error reading file: %v\n", err)
+		return
+	}
+
+	// Parse the test cases
+	testCases := parseFibonacciTestCases(fileContent)
+
+	// Run through the test cases
+	for index, testCase := range testCases {
+		result := fibonacci(testCase.n)
+
+		if result != testCase.expectedResult {
+			fmt.Printf("Test case %d failed:\n", index+1)
+			fmt.Printf("  Input n: %d\n", testCase.n)
+			fmt.Printf("  Expected: %d\n", testCase.expectedResult)
+			fmt.Printf("  Got: %d\n", result)
+			return // Exit after printing the first failed test case
+		}
+	}
+	fmt.Println("All test cases passed.")
+}
+
+func main() {
+	// Example usage: Run tests from the file
+	testFibonacciFromFile("test-case.txt")
+}

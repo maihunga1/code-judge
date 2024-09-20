@@ -1,0 +1,38 @@
+# Function to calculate the nth Fibonacci number
+def fibonacci(n):
+    # Enter your code here
+
+# Function to parse the saved Fibonacci test cases from a file
+def parse_fibonacci_test_cases(file_content):
+    test_cases = file_content.strip().split("\n\n")  # Split into individual test cases
+    parsed_cases = []
+    
+    for test_case in test_cases:
+        lines = test_case.strip().split("\n")
+        n = int(lines[0].strip())
+        expected_result = int(lines[1].strip())
+        parsed_cases.append({"n": n, "expected_result": expected_result})
+    
+    return parsed_cases
+
+# Function to read test cases from a file and test the Fibonacci function
+def test_fibonacci_from_file(txt_filename="fibonacci-test-case.txt"):
+    with open(txt_filename, "r", encoding="utf-8") as file:
+        file_content = file.read()
+
+    test_cases = parse_fibonacci_test_cases(file_content)
+
+    for index, test_case in enumerate(test_cases):
+        n = test_case["n"]
+        expected_result = test_case["expected_result"]
+        result = fibonacci(n)
+
+        if result != expected_result:
+            print(f"Test case {index + 1} failed:")
+            print(f"  Input n: {n}")
+            print(f"  Expected: {expected_result}")
+            print(f"  Got: {result}")
+            return  # Exit after printing the first failed test case
+
+# Example usage: Run tests from the file
+test_fibonacci_from_file("test-case.txt")

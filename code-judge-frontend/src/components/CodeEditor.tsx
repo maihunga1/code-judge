@@ -13,13 +13,16 @@ export interface CodeEditorProps {
     codeFileContent: string;
     language: string;
   }) => void;
-  onCodeChange: (content: string) => void; // New prop
+  onCodeChange: (content: string) => void;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = React.memo(
   ({ language, onLanguageChange, onSubmit, titleSlug, onCodeChange }) => {
     const monacoRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const [sample, setSample] = React.useState<string>("");
+
+    // Set 'javascript' as the default language if no language is provided
+    const defaultLanguage = language || "javascript";
 
     function handleEditorWillMount(monaco: Monaco) {
       monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
@@ -43,29 +46,38 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
     const handleSubmit = () => {
       if (monacoRef.current) {
         const codeFileContent = monacoRef.current.getValue() || "";
-        onSubmit({ titleSlug, codeFileContent, language });
+        onSubmit({ titleSlug, codeFileContent, language: defaultLanguage });
       } else {
         console.error("Editor is not initialized.");
       }
     };
 
     function handleLanguageChange(event: React.ChangeEvent<HTMLSelectElement>) {
-      onLanguageChange(event.target.value);
+      const selectedLanguage = event.target.value;
+      onLanguageChange(selectedLanguage);
+
       if (monacoRef.current) {
         const model = monacoRef.current.getModel();
         if (model) {
-          editor.setModelLanguage(model, event.target.value);
+          editor.setModelLanguage(model, selectedLanguage);
         }
       }
     }
 
+    // Fetch the sample for the default language or the currently selected language
     useEffect(() => {
-      if (titleSlug) {
-        getSample(titleSlug)
-          .then((sample) => setSample(sample))
+      if (titleSlug && defaultLanguage) {
+        getSample(titleSlug, defaultLanguage)
+          .then((sample) => {
+            setSample(sample); // Update the state with the fetched sample
+
+            if (monacoRef.current) {
+              monacoRef.current.setValue(sample); // Set the sample in the editor after fetch
+            }
+          })
           .catch((error) => console.error(error));
       }
-    }, [titleSlug]);
+    }, [titleSlug, defaultLanguage]);
 
     return (
       <div className="editor-container">
@@ -75,7 +87,7 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
           </label>
           <select
             id="language-select"
-            value={language}
+            value={defaultLanguage}
             onChange={handleLanguageChange}
           >
             <option value="javascript">JavaScript</option>
@@ -86,8 +98,8 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
         <div className="editor-wrapper">
           <Editor
             height="calc(100vh - 160px)"
-            language={language}
-            defaultValue={sample}
+            language={defaultLanguage}
+            defaultValue={sample} // Use defaultValue for initial render
             beforeMount={handleEditorWillMount}
             onMount={handleEditorDidMount}
           />

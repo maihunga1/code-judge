@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = "http://ec2-3-106-143-64.ap-southeast-2.compute.amazonaws.com:3000";
+const backendUrl = "http://localhost:3000";
 
 async function login(username: string, password: string) {
   try {
@@ -10,7 +10,7 @@ async function login(username: string, password: string) {
     });
     console.info("Login successful:", response.data);
 
-    const { message, token } = response.data;
+    const { token } = response.data;
 
     if (!token) {
       throw new Error("Invalid response from server: No token provided");
@@ -73,9 +73,11 @@ async function getProblemDescription(titleSlug: string) {
   }
 }
 
-async function getSample(titleSlug: string) {
+async function getSample(titleSlug: string, language: string) {
   try {
-    const response = await axios.get(`${backendUrl}/problems/${titleSlug}/sample`);
+    const response = await axios.get(
+      `${backendUrl}/problems/${titleSlug}/sample/${language}`
+    );
     console.info("Sample fetched successfully:", response.data);
     return response.data;
   } catch (error) {

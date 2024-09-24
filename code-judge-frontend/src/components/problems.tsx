@@ -10,7 +10,9 @@ const Problems: React.FC = React.memo(() => {
 
   useEffect(() => {
     if (titleSlug) {
-      getProblemDescription(titleSlug)
+      const token = localStorage.getItem("token") || "";
+
+      getProblemDescription(titleSlug, token)
         .then((problem) => setProblem(problem))
         .catch((error) => console.error(error));
     }

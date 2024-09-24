@@ -1,9 +1,10 @@
-import React, {
+import {
   createContext,
   useState,
   useContext,
   ReactNode,
   useEffect,
+  useCallback,
 } from "react";
 
 interface User {
@@ -26,25 +27,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
+
     if (token && storedUser) {
       setIsAuthenticated(true);
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
-  const login = (token: string, user: User) => {
+  const login = useCallback((token: string, user: User) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
+
     setIsAuthenticated(true);
     setUser(user);
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
     setIsAuthenticated(false);
     setUser(null);
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
@@ -55,8 +59,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
+
   return context;
 };

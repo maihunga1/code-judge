@@ -3,6 +3,8 @@ import { getAllProblems } from "../api/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/ProblemList.css";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 interface IProblem {
   titleSlug: string;
@@ -15,8 +17,12 @@ function ProblemList() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  const token = useSelector((state: RootState) => state.user.idToken);
+
   useEffect(() => {
-    getAllProblems()
+    if (!token) return;
+  
+    getAllProblems(token)
       .then((problems) => {
         console.log("API Problems:", problems);
         setProblemList(problems);
@@ -26,7 +32,7 @@ function ProblemList() {
         setError("Failed to load problems.");
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [token]);
 
   const handleLogout = () => {
     logout();

@@ -1,26 +1,17 @@
-import React, { useState, useCallback } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import Login from "./components/Login";
+import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProblemList from "./components/ProblemList";
-import Register from "./components/Register";
 import EditorWrapper from "./components/EditorWrapper";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CodeEditorProps } from "./components/CodeEditor";
 import { submitSolution } from "./api/api";
+import AuthCallback from "./components/AuthCallback";
+import { Provider, useDispatch } from "react-redux";
+import { store } from "./store/store";
+import { setUser } from "./store/slices/userSlice";
+import ProblemRoute, { PrivateRoute } from "./routes/ProblemRoute";
 
-const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const { user } = useAuth();
-  return user ? <>{children}</> : <Navigate to="/login" />;
-};
-
-const App: React.FC = () => {
+const App = memo(function App (): React.ReactElement {
   const [lang, setLang] = useState<CodeEditorProps["language"]>("javascript");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
@@ -56,39 +47,44 @@ const App: React.FC = () => {
     setIsSubmitted((prevState) => !prevState);
   }, []);
 
+  const element = useMemo(() => {
+    return <PrivateRoute />;
+  }, []);
+
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/problems"
-            element={
-              <PrivateRoute>
-                <ProblemList />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/problems/:titleSlug"
-            element={
-              <PrivateRoute>
-                <EditorWrapper
-                  isSubmitted={isSubmitted}
-                  handleReturn={handleReturn}
-                  handleSubmit={handleSubmit}
-                  lang={lang}
-                  handleLanguageChange={handleLanguageChange}
-                />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/problems" element={element} />
+            <Route
+              path="/problems/:titleSlug"
+              element={
+                <PrivateRoute>
+                  <EditorWrapper
+                    isSubmitted={isSubmitted}
+                    handleReturn={handleReturn}
+                    handleSubmit={handleSubmit}
+                    lang={lang}
+                    handleLanguageChange={handleLanguageChange}
+                  />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/auth-callback"
+              element={
+                // <PrivateRoute>
+                <AuthCallback />
+                // </PrivateRoute>
+              }
+            />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </Provider>
   );
-};
+});
+
 
 export default App;

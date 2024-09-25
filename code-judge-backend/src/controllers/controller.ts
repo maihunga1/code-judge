@@ -28,6 +28,7 @@ export class CodeJudgeController {
             titleSlug,
             "description.txt"
           );
+
           try {
             const description = await fs.promises.readFile(
               descriptionPath,

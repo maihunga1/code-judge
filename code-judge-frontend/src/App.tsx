@@ -1,19 +1,19 @@
-import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
+import React, { useState, useCallback, memo } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProblemList from "./components/ProblemList";
 import EditorWrapper from "./components/EditorWrapper";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import { CodeEditorProps } from "./components/CodeEditor";
 import { submitSolution } from "./api/api";
 import AuthCallback from "./components/AuthCallback";
-import { Provider, useDispatch } from "react-redux";
-import { store } from "./store/store";
-import { setUser } from "./store/slices/userSlice";
-import ProblemRoute, { PrivateRoute } from "./routes/ProblemRoute";
+import { Provider, useSelector } from "react-redux";
+import { RootState, store } from "./store/store";
+import { PrivateRoute } from "./routes/ProblemRoute";
+import ProblemList from "./components/ProblemList";
 
-const App = memo(function App (): React.ReactElement {
+const AppContent = memo(function App(): React.ReactElement {
   const [lang, setLang] = useState<CodeEditorProps["language"]>("javascript");
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const token = useSelector((state: RootState) => state.user.idToken); // Use token from Redux store
 
   const handleLanguageChange = useCallback(
     (lang: CodeEditorProps["language"]) => {
@@ -33,58 +33,61 @@ const App = memo(function App (): React.ReactElement {
       language: string;
     }) => {
       try {
-        await submitSolution(titleSlug, codeFileContent, language);
-        console.log(titleSlug, codeFileContent, language);
-        setIsSubmitted((prevState) => !prevState);
+        if (token) {
+          await submitSolution(titleSlug, codeFileContent, language, token); // Use token from useSelector
+          console.log(titleSlug, codeFileContent, language);
+          setIsSubmitted((prevState) => !prevState);
+        } else {
+          console.error("Token is undefined");
+        }
       } catch (error) {
         console.error("Error submitting code:", error);
       }
     },
-    []
+    [token] // Add token as a dependency to ensure it's always up-to-date
   );
 
   const handleReturn = useCallback(() => {
     setIsSubmitted((prevState) => !prevState);
   }, []);
 
-  const element = useMemo(() => {
-    return <PrivateRoute />;
-  }, []);
-
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/problems" element={element} />
-            <Route
-              path="/problems/:titleSlug"
-              element={
-                <PrivateRoute>
-                  <EditorWrapper
-                    isSubmitted={isSubmitted}
-                    handleReturn={handleReturn}
-                    handleSubmit={handleSubmit}
-                    lang={lang}
-                    handleLanguageChange={handleLanguageChange}
-                  />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/auth-callback"
-              element={
-                // <PrivateRoute>
-                <AuthCallback />
-                // </PrivateRoute>
-              }
-            />
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </Provider>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route
+            path="/problems"
+            element={
+              <PrivateRoute>
+                <ProblemList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/problems/:titleSlug"
+            element={
+              <PrivateRoute>
+                <EditorWrapper
+                  isSubmitted={isSubmitted}
+                  handleReturn={handleReturn}
+                  handleSubmit={handleSubmit}
+                  lang={lang}
+                  handleLanguageChange={handleLanguageChange}
+                />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/auth-callback" element={<AuthCallback />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 });
 
+const App = () => (
+  <Provider store={store}>
+    <AppContent />
+  </Provider>
+);
 
 export default App;

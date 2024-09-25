@@ -14,14 +14,14 @@ function ProblemList() {
   const [problemList, setProblemList] = useState<IProblem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const token = useSelector((state: RootState) => state.user.idToken);
 
   useEffect(() => {
     if (!token) return;
-  
+
     getAllProblems(token)
       .then((problems) => {
         console.log("API Problems:", problems);
@@ -50,7 +50,7 @@ function ProblemList() {
   return (
     <div className="problem-list-container">
       <div className="header">
-        <h1>Hello, {user?.username}</h1>
+        <h1>Leetcode</h1>
         <button onClick={handleLogout} className="logout-button">
           Log out
         </button>

@@ -3,6 +3,8 @@ import Editor, { Monaco } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import "../styles/CodeEditor.css";
 import { getSample } from "../api/api";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 export interface CodeEditorProps {
   titleSlug: string;
@@ -20,6 +22,8 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
   ({ language, onLanguageChange, onSubmit, titleSlug, onCodeChange }) => {
     const monacoRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const [sample, setSample] = React.useState<string>("");
+
+    const token = useSelector((state: RootState) => state.user.idToken);
 
     function handleEditorWillMount(monaco: Monaco) {
       monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
@@ -60,12 +64,14 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
     }
 
     useEffect(() => {
+      if (!token) return;
+
       if (titleSlug) {
-        getSample(titleSlug)
+        getSample(titleSlug, token)
           .then((sample) => setSample(sample))
           .catch((error) => console.error(error));
       }
-    }, [titleSlug]);
+    }, [titleSlug, token]);
 
     return (
       <div className="editor-container">

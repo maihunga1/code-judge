@@ -2,7 +2,10 @@ import React, { useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import MemoizedProblemComponent from "./Problems";
 import CodeEditor from "./CodeEditor";
-import Result from "./Result";
+import Result, { SubmissionResult } from "./Result";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import { submitSolution } from "../api/api";
 
 interface EditorWrapperProps {
   isSubmitted: boolean;
@@ -17,33 +20,28 @@ interface EditorWrapperProps {
 }
 
 const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
-  ({ isSubmitted, handleReturn, handleSubmit, lang, handleLanguageChange }) => {
+  ({ handleReturn, handleSubmit, lang, handleLanguageChange }) => {
     const { titleSlug = "" } = useParams<{ titleSlug?: string }>();
     const [codeFileContent, setCodeFileContent] = useState<string>("");
+    const [submissionData, setSubmissionData] =
+      useState<SubmissionResult | undefined>(undefined);
 
-    const handleSubmitCallback = useCallback(
-      (data: {
-        titleSlug: string;
-        codeFileContent: string;
-        language: string;
-      }) => {
-        console.log(data);
-        handleSubmit(data);
-      },
-      [handleSubmit]
-    );
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
     const handleCodeChange = useCallback((content: string) => {
       console.log("handleCodeChange", content);
       setCodeFileContent(content);
     }, []);
 
+    const token = useSelector((state: RootState) => state.user.idToken);
+
     return (
       <div className="container">
         <div className="sidebar">
           {isSubmitted ? (
             <Result
-              onReturn={handleReturn}
+              submissionData={submissionData}
+              onReturn={() => setIsSubmitted(false)}
               titleSlug={titleSlug}
               codeFileContent={codeFileContent}
               language={lang}
@@ -56,7 +54,27 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
           titleSlug={titleSlug}
           language={lang}
           onLanguageChange={handleLanguageChange}
-          onSubmit={(data) => handleSubmitCallback({ ...data })}
+          onSubmit={async ({
+            titleSlug,
+            codeFileContent,
+            language,
+          }) => {
+            if (!token) throw new Error("Authentication token is missing.");
+
+            const data = await submitSolution(
+              titleSlug,
+              codeFileContent,
+              language,
+              token
+            );
+
+            setSubmissionData({
+              result: data.result || "No result available.",
+              message: data.message || "No message provided.",
+            });
+
+            setIsSubmitted(true);
+          }}
           onCodeChange={handleCodeChange}
         />
       </div>

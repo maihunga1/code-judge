@@ -3,7 +3,6 @@ import {
   useState,
   useContext,
   ReactNode,
-  useEffect,
   useCallback,
 } from "react";
 
@@ -21,18 +20,13 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    !!localStorage.getItem("token")
+  );
+  const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("user");
-
-    if (token && storedUser) {
-      setIsAuthenticated(true);
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   const login = useCallback((token: string, user: User) => {
     localStorage.setItem("token", token);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { submitSolution } from "../api/api";
-import { title } from "process";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 // Adjust the ResultProps if necessary to accept parameters or pass required values
 interface ResultProps {
@@ -8,46 +9,37 @@ interface ResultProps {
   titleSlug: string;
   codeFileContent: string;
   language: string;
+  submissionData?: SubmissionResult;
 }
 
-const Result: React.FC<ResultProps> = ({
-  onReturn,
-  titleSlug,
-  codeFileContent,
-  language,
-}) => {
-  const [result, setResult] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export interface SubmissionResult {
+  result: string;
+  message: string;
+}
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      try {
-        setLoading(true);
-        const data = await submitSolution(titleSlug, codeFileContent, language);
-        console.log("Fetched data:", data);
-        setResult(data.result);
-        setMessage(data.message);
-      } catch (error) {
-        console.error("Failed to fetch results:", error);
-        setError("Failed to fetch results. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResults();
-  }, [language, titleSlug]);
-
+const Result: React.FC<ResultProps> = ({ onReturn, submissionData }) => {
   return (
     <div>
-      <button onClick={onReturn}>Return</button>
-      <h1>Result</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-      {result && <p>{result}</p>}
-      {message && <p>{message}</p>}
+      <button
+        className="w-20 border-2 border-sky-500 rounded flex items-center justify-center"
+        onClick={onReturn}
+      >
+        Return
+      </button>
+      <h1>Submission Result</h1>
+
+      {/* Handle different states */}
+      {!submissionData && <p>Loading results...</p>}
+      {!!submissionData && (
+        <>
+          <p>
+            <strong>Result:</strong> {submissionData.result}
+          </p>
+          <p>
+            <strong>Message:</strong> {submissionData.message}
+          </p>
+        </>
+      )}
     </div>
   );
 };

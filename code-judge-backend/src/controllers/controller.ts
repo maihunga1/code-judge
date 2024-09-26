@@ -7,7 +7,6 @@ import {
   getFileExtByLanguage,
   isLanguage,
 } from "../utils";
-import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
 

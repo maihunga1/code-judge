@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { codeJudgeController } from "../controllers";
-import { authenticate } from "../middleware/authenticator";
+// import { authenticate } from "../middleware/authenticator";
 
 export class CodeJudgeRouter {
   private readonly router: Router;
@@ -12,7 +12,7 @@ export class CodeJudgeRouter {
 
   private initializeRoutes(): void {
     // Apply authenticate middleware to all routes
-    this.router.use(authenticate);
+    // this.router.use(authenticate);
 
     // Get all problems
     this.router.get("/problems", codeJudgeController.getAllProblems);

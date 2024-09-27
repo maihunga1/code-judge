@@ -1,19 +1,11 @@
 import { SSMClient, GetParametersCommand } from "@aws-sdk/client-ssm";
 
-export class ConfigService {
-  private static instance: ConfigService;
+class ConfigService {
   private config: Record<string, string> = {};
   private client: SSMClient;
 
-  private constructor() {
+  constructor() {
     this.client = new SSMClient({ region: "ap-southeast-2" });
-  }
-
-  public static getInstance(): ConfigService {
-    if (!ConfigService.instance) {
-      ConfigService.instance = new ConfigService();
-    }
-    return ConfigService.instance;
   }
 
   public async initialize(): Promise<void> {
@@ -27,7 +19,6 @@ export class ConfigService {
             "/n11744260/docker-images/node",
             "/n11744260/docker-images/golang",
           ],
-          WithDecryption: true,
         })
       );
 
@@ -48,3 +39,5 @@ export class ConfigService {
     return this.config[key];
   }
 }
+
+export const configService = new ConfigService();

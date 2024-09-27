@@ -1,25 +1,32 @@
-import { Request, Response, NextFunction } from 'express';
-import { CognitoJwtVerifier } from 'aws-jwt-verify';
-
+import { Request, Response, NextFunction } from "express";
+import { CognitoJwtVerifier } from "aws-jwt-verify";
+import { configService } from "../services";
 // Extend the Request interface to include the user property
-declare module 'express-serve-static-core' {
+declare module "express-serve-static-core" {
   interface Request {
     user?: any;
   }
 }
 
-// Replace these with your actual User Pool ID and Client ID
-const userPoolId = "ap-southeast-2_0RpTGxp6c";
-const clientId = "1rhukc2hl118rejuis4hftarf8";
+const userPoolId = configService.get("/n11744260/auth/userPoolID");
+const clientId = configService.get("/n11744260/auth/clientID");
+
+if (!userPoolId || !clientId) {
+  throw new Error("User Pool ID or Client ID is undefined");
+}
 
 // Create a Cognito JWT Verifier
 const idVerifier = CognitoJwtVerifier.create({
-  userPoolId: userPoolId,
-  clientId: clientId,
+  userPoolId,
+  clientId,
   tokenUse: "id",
 });
 
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     // Get the token from the authorization header
     const authHeader = req.headers.authorization;
@@ -40,6 +47,8 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     next();
   } catch (error) {
     console.error("Token verification failed", error);
-    return res.status(401).json({ message: "Unauthorized, token verification failed" });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized, token verification failed" });
   }
 };

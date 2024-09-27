@@ -3,7 +3,7 @@ import path from 'path';
 import { BufferEntry, fileService } from './file.service';
 import { containerService } from './docker.service';
 import {
-  dockerImageByLanguage,
+  getDockerImageByLanguage,
   getExecCommandByLanguage,
   getFileExtByLanguage,
   isLanguage,
@@ -37,7 +37,7 @@ class SubmissionService {
     const tarBuffer = await fileService.createTarBuffer([codeFileBufferEntry, testFileBufferEntry]);
 
     // Docker container management
-    const containerID = await containerService.createContainer(dockerImageByLanguage[lang]);
+    const containerID = await containerService.createContainer(getDockerImageByLanguage(lang));
     await containerService.startContainer(containerID);
     await containerService.copyFileToContainer(containerID, tarBuffer);
 

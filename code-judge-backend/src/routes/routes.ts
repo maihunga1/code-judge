@@ -12,7 +12,7 @@ export class CodeJudgeRouter {
 
   private initializeRoutes(): void {
     // Apply authenticate middleware to all routes
-    // this.router.use(authenticate);
+    this.router.use(authenticate);
 
     // Get all problems
     this.router.get("/problems", codeJudgeController.getAllProblems);

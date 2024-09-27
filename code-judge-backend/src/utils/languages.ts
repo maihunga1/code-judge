@@ -1,4 +1,5 @@
 import { dockerImage } from "../services/docker.service";
+import { configService } from "../services";
 
 const SUPPORTED_LANGUAGES = ["go", "javascript", "python"] as const;
 
@@ -16,11 +17,17 @@ export const getFileExtByLanguage: Record<Language, languageExt> = {
   python: "py",
 };
 
-export const dockerImageByLanguage: { [key in Language]: dockerImage } = {
-  go: { name: "golang", tag: "bookworm" },
-  javascript: { name: "node", tag: "latest" },
-  python: { name: "python", tag: "3.9-bullseye" },
-};
+export function getDockerImageByLanguage(language: Language): dockerImage {
+  const imageString = configService.get(`/n11744260/docker-images/${language}`);
+  return parseDockerImage(imageString);
+}
+
+function parseDockerImage(imageString: string | undefined): dockerImage {
+  if (!imageString) throw new Error(`Docker image is undefined for language`);
+
+  const [name, tag] = imageString.split(":");
+  return { name, tag };
+}
 
 export const getExecCommandByLanguage: Record<Language, string[]> = {
   go: ["go", "run", "main.go"],

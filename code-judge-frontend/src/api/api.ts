@@ -12,7 +12,7 @@ async function getProblemDescription(titleSlug: string, token: string) {
 
     console.info("Problem fetched successfully:", response.data);
 
-    return response.data;
+    return response.data.description;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error fetching problem:", error.response.data);
@@ -25,14 +25,14 @@ async function getProblemDescription(titleSlug: string, token: string) {
 
 async function getSample(titleSlug: string, token: string) {
   try {
-    const response = await axios.get(`${backendUrl}/problems/${titleSlug}/sample`, {
+    const response = await axios.get(`${backendUrl}/problems/${titleSlug}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
 
     console.info("Sample fetched successfully:", response.data);
-    return response.data;
+    return response.data.sample;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error fetching sample:", error.response.data);

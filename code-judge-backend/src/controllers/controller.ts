@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { fileService } from "../services";
-import { Language } from "../utils";
+import { Language, isLanguage } from "../utils";
 import { submissionService } from "../services/submission.service";
 
 export class CodeJudgeController {
@@ -14,30 +14,15 @@ export class CodeJudgeController {
     }
   }
 
-  public getProblemDescription = async (req: Request, res: Response) => {
+  public getProblemDetails = async (req: Request, res: Response) => {
     const { titleSlug } = req.params;
 
     try {
       const description = await fileService.getProblemDescription(titleSlug);
-      res.status(200).json({ description });
+      const sample = await fileService.getSample(titleSlug);
+      res.status(200).json({ titleSlug, description, sample });
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch problem description" });
-    }
-  };
-
-  public getSample = async (req: Request, res: Response) => {
-    const { titleSlug } = req.params;
-    const { language }: { language: Language } = req.body;
-
-    if (typeof language !== "string") {
-      return res.status(400).json({ error: "Invalid or missing language parameter" });
-    }
-
-    try {
-      const sample = await fileService.getSample(titleSlug, language);
-      res.status(200).json({ sample });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch sample code" });
+      res.status(500).json({ error: "Failed to fetch problem details" });
     }
   };
 

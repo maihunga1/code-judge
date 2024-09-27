@@ -2,7 +2,6 @@ import tar from "tar-stream";
 import zlib from "zlib";
 import fs from "fs";
 import stream from "stream";
-import { getFileExtByLanguage, dockerImageByLanguage, getExecCommandByLanguage, isLanguage, Language } from "../utils";
 import { containerService } from "../services/docker.service";
 
 export interface BufferEntry {
@@ -37,9 +36,8 @@ export class FileService {
     return `./problems/${titleSlug}/test-case.txt`;
   }
 
-  getFileCodeTemplatePath(titleSlug: string, language: Language): string {
-    const ext = getFileExtByLanguage[language];
-    return `./problems/${titleSlug}/sample.${ext}`;
+  getFileCodeTemplatePath(titleSlug: string): string {
+    return `./problems/${titleSlug}/sample.js`;
   }
 
   getFileContent(filePath: string): string {
@@ -73,53 +71,12 @@ export class FileService {
     return entry.type === "fileContent" ? new FileContentStrategy() : new FilePathStrategy();
   }
 
-  // Docker operations moved from Controller
-  async createSubmission(titleSlug: string, codeFileContent: string, lang: string): Promise<{ result: string; message?: string }> {
-    if (!isLanguage(lang)) throw new Error(`Invalid or unsupported language: ${lang}`);
-
-    const codeFileBufferEntry: BufferEntry = {
-      fileName: `main.${getFileExtByLanguage[lang]}`,
-      content: codeFileContent,
-      type: "fileContent",
-    };
-
-    const testFileBufferEntry: BufferEntry = {
-      fileName: "test-case.txt",
-      content: this.getFileTestCasePath(titleSlug),
-      type: "filePath",
-    };
-
-    const tarBuffer = await this.createTarBuffer([codeFileBufferEntry, testFileBufferEntry]);
-
-    const containerID = await containerService.createContainer(dockerImageByLanguage[lang]);
-    await containerService.startContainer(containerID);
-    await containerService.copyFileToContainer(containerID, tarBuffer);
-
-    const execResponse = await containerService.execCommand(containerID, getExecCommandByLanguage[lang]);
-
-    containerService.killAndRemoveContainer(containerID); // Cleanup container after execution
-
-    return execResponse
-      ? { result: "failed", message: execResponse }
-      : { result: "passed" };
-  }
-
   // Getting all problems
-  async getAllProblems(): Promise<{ titleSlug: string; description: string }[]> {
+  async getAllProblems(): Promise<{ titleSlug: string }[]> {
     const problemsDir = "./problems";
     const titleSlugs = await fs.promises.readdir(problemsDir);
 
-    return Promise.all(
-      titleSlugs.map(async (titleSlug) => {
-        const descriptionPath = `${problemsDir}/${titleSlug}/description.txt`;
-        try {
-          const description = await fs.promises.readFile(descriptionPath, "utf8");
-          return { titleSlug, description };
-        } catch (err) {
-          return { titleSlug, description: "Failed to read description" };
-        }
-      })
-    );
+    return titleSlugs.map((titleSlug) => ({ titleSlug }));
   }
 
   // Getting problem description
@@ -129,8 +86,8 @@ export class FileService {
   }
 
   // Getting code sample
-  async getSample(titleSlug: string, language: Language): Promise<string> {
-    const filePath = this.getFileCodeTemplatePath(titleSlug, language);
+  async getSample(titleSlug: string): Promise<string> {
+    const filePath = this.getFileCodeTemplatePath(titleSlug);
     return this.getFileContent(filePath);
   }
 }

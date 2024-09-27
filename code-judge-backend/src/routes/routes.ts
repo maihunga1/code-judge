@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { codeJudgeController } from "../controllers";
-// import { authenticate } from "../middleware/authenticator";
+import { authenticate } from "../middleware/authenticator";
 
 export class CodeJudgeRouter {
   private readonly router: Router;
@@ -18,10 +18,7 @@ export class CodeJudgeRouter {
     this.router.get("/problems", codeJudgeController.getAllProblems);
 
     // Get problem description
-    this.router.get("/problems/:titleSlug", codeJudgeController.getProblemDescription);
-
-    // Get sample
-    this.router.get("/problems/:titleSlug/sample", codeJudgeController.getSample);
+    this.router.get("/problems/:titleSlug", codeJudgeController.getProblemDetails);
 
     // Create a new submission
     this.router.post("/submissions", codeJudgeController.createSubmission);

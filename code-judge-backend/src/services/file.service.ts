@@ -2,7 +2,14 @@ import tar from "tar-stream";
 import zlib from "zlib";
 import fs from "fs";
 import stream from "stream";
-import { containerService } from "../services/docker.service";
+
+import {
+  getFileExtByLanguage,
+  Language,
+  languageExt,
+  SUPPORTED_LANGUAGES,
+} from "../utils";
+import path from "path";
 
 export interface BufferEntry {
   fileName: string;
@@ -27,17 +34,22 @@ class FilePathStrategy implements ContentStrategy {
 }
 
 export class FileService {
-  // Paths
+  private readonly basePath: string;
+
+  constructor() {
+    this.basePath = path.join(__dirname, "..", ".."); // Go up two levels to reach the project root
+  }
+
   getFileProblemDescriptionPath(titleSlug: string): string {
-    return `./problems/${titleSlug}/description.txt`;
+    return path.join(this.basePath, "problems", titleSlug, "description.txt");
   }
 
   getFileTestCasePath(titleSlug: string): string {
-    return `./problems/${titleSlug}/test-case.txt`;
+    return path.join(this.basePath, "problems", titleSlug, "test-case.txt");
   }
 
-  getFileCodeTemplatePath(titleSlug: string): string {
-    return `./problems/${titleSlug}/sample.js`;
+  getFileCodeTemplatePath(titleSlug: string, ext: languageExt): string {
+    return path.join(this.basePath, "problems", titleSlug, `sample.${ext}`);
   }
 
   getFileContent(filePath: string): string {
@@ -63,20 +75,16 @@ export class FileService {
       const chunks: Buffer[] = [];
       passThrough.on("data", (chunk) => chunks.push(chunk));
       passThrough.on("end", () => resolve(Buffer.concat(chunks)));
-      passThrough.on("error", (err) => reject("Error creating compressed buffer: " + err));
+      passThrough.on("error", (err) =>
+        reject("Error creating compressed buffer: " + err)
+      );
     });
   }
 
   private getContentStrategy(entry: BufferEntry): ContentStrategy {
-    return entry.type === "fileContent" ? new FileContentStrategy() : new FilePathStrategy();
-  }
-
-  // Getting all problems
-  async getAllProblems(): Promise<{ titleSlug: string }[]> {
-    const problemsDir = "./problems";
-    const titleSlugs = await fs.promises.readdir(problemsDir);
-
-    return titleSlugs.map((titleSlug) => ({ titleSlug }));
+    return entry.type === "fileContent"
+      ? new FileContentStrategy()
+      : new FilePathStrategy();
   }
 
   // Getting problem description
@@ -86,9 +94,52 @@ export class FileService {
   }
 
   // Getting code sample
-  async getSample(titleSlug: string): Promise<string> {
-    const filePath = this.getFileCodeTemplatePath(titleSlug);
-    return this.getFileContent(filePath);
+  async getSample(titleSlug: string): Promise<Record<Language, string>> {
+    const result: Record<Language, string> = {
+      go: "",
+      javascript: "",
+      python: "",
+    };
+
+    for (const language of SUPPORTED_LANGUAGES) {
+      const filePath = this.getFileCodeTemplatePath(
+        titleSlug,
+        getFileExtByLanguage[language]
+      );
+
+      // TODO: handle error if file doesn't exist
+      try {
+        const content = this.getFileContent(filePath);
+        if (content !== "") result[language] = content;
+      } catch (err) {
+        if (err instanceof Error && "code" in err && err.code === "ENOENT") {
+          console.log(`File not found: ${filePath}`);
+        } else {
+          console.error(err);
+        }
+      }
+    }
+
+    return result;
+  }
+
+  async checkProblemExists(titleSlug: string): Promise<boolean> {
+    const filePath = this.getFileProblemDescriptionPath(titleSlug);
+
+    return fs.existsSync(filePath);
+  }
+
+  async writeS3Object(objectKey: string, content: string): Promise<void> {
+    const filePath = path.join(this.basePath, objectKey);
+    await this.writeFile(filePath, content);
+  }
+
+  async writeFile(filePath: string, content: string): Promise<void> {
+    if (!fs.existsSync(filePath)) {
+      await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+    }
+
+    fs.promises.writeFile(filePath, content);
   }
 }
 

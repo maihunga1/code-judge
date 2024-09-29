@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { configService } from "./services/config.service";
+import preparedStatements from "./db/statement";
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ const port = process.env.PORT || 3000;
 async function startServer() {
   try {
     await configService.initialize();
-    console.log("Config service initialized");
+    await preparedStatements.initialize();
 
     // import the codeJudgeRouter after the configService is initialized since codeJudgeRouter depends on the configService
     const { codeJudgeRouter } = await import("./routes");

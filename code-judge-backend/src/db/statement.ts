@@ -1,4 +1,23 @@
 import mysql from "mysql2/promise";
+import {
+  GetSecretValueCommand,
+  SecretsManagerClient,
+} from "@aws-sdk/client-secrets-manager";
+import dotenv from "dotenv";
+dotenv.config();
+
+async function getSecret(secretName: string): Promise<string> {
+  const client = new SecretsManagerClient({ region: "ap-southeast-2" });
+  const command = new GetSecretValueCommand({ SecretId: secretName });
+
+  const response = await client.send(command);
+
+  if (response.SecretString) {
+    return response.SecretString;
+  } else {
+    throw new Error("Secret string not found");
+  }
+}
 
 export enum StatementName {
   GET_USER_BY_ID = "getUserById",
@@ -7,20 +26,31 @@ export enum StatementName {
 }
 
 class PreparedStatements {
-  private pool: mysql.Pool;
+  private pool!: mysql.Pool;
   private preparedStatements: Record<string, mysql.PreparedStatementInfo> = {};
 
   constructor() {
+    this.initializePool();
+  }
+
+  private async initializePool() {
+    const secret = await getSecret("n11744260-rds-secret");
+    const secretJSON = JSON.parse(secret);
+
     this.pool = mysql.createPool({
-      host: process.env.DB_HOST || "localhost",
-      user: process.env.DB_USER || "root",
-      password: process.env.DB_PASSWORD || "",
-      database: process.env.DB_NAME || "leetcode",
-      port: parseInt(process.env.DB_PORT || "3306"),
-      connectionLimit: 10, // Set the maximum number of connections in the pool
-      queueLimit: 0, // Unlimited queue
-      waitForConnections: true, // Wait for available connection
+      host: secretJSON.host,
+      user: secretJSON.username,
+      password: secretJSON.password,
+      database: secretJSON.dbInstanceIdentifier,
+      port: secretJSON.port,
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
     });
+
+    const connection = await this.pool.getConnection();
+    await connection.ping();
+    connection.release();
   }
 
   public async initialize() {

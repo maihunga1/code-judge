@@ -9,12 +9,15 @@ import {
 } from "../utils";
 import { submissionDB } from "../db/submission.db";
 import { SubmissionModel } from "../db/models/submission.model";
+import { randomUUID } from "crypto";
+import { codeJudgeController } from "../controllers";
 
 class SubmissionService {
   async createSubmission(
     titleSlug: string,
     codeFileContent: string,
-    lang: string
+    lang: string,
+    userID: any
   ): Promise<{ result: string; message?: string }> {
     // Validate inputs
     if (
@@ -63,7 +66,19 @@ class SubmissionService {
     containerService.killAndRemoveContainer(containerID);
 
     // TODO: Save submission to database using submissionService (which calls submissionDB)
+    const submission = new SubmissionModel({
+      "qut-username": "n11744260@qut.edu.au",
+      submission_id: randomUUID(),
+      user_id: userID,
+      title_slug: titleSlug,
+      code_file_url: "",
+      language: lang,
+      result: execResponse ? "failed" : "passed",
+      message: execResponse || "",
+      created: new Date(),
+    });
 
+    await submissionDB.putSubmission(submission);
     // Handle response
     if (!execResponse) {
       return { result: "passed" };

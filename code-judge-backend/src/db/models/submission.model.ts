@@ -1,4 +1,5 @@
 interface Submission {
+  "qut-username": string;
   submission_id: string;
   user_id: string;
   title_slug: string;
@@ -10,6 +11,7 @@ interface Submission {
 }
 
 export class SubmissionModel {
+  "qut-username": string;
   submissionID: string;
   userID: string;
   titleSlug: string;
@@ -20,6 +22,7 @@ export class SubmissionModel {
   created: Date;
 
   constructor(data: Submission) {
+    this["qut-username"] = data["qut-username"];
     this.submissionID = data.submission_id;
     this.userID = data.user_id;
     this.titleSlug = data.title_slug;

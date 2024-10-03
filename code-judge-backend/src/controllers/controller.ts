@@ -4,12 +4,18 @@ import { submissionService, problemService, userService } from "../services";
 export class CodeJudgeController {
   async createSubmission(req: Request, res: Response): Promise<void> {
     const { titleSlug, codeFileContent, language: lang } = req.body;
+    const { userId: userID } = req.user.identities[0];
+
+    if (!userID) {
+      throw new Error("User ID not found in token");
+    }
 
     try {
       const result = await submissionService.createSubmission(
         titleSlug,
         codeFileContent,
-        lang
+        lang,
+        userID
       );
 
       res.status(200).json(result);

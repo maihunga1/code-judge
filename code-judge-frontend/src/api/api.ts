@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const backendUrl = "http://localhost:3000";
+export const backendUrl = "http://localhost:3000";
 
 async function getProblemDescription(titleSlug: string, token: string) {
   try {
@@ -12,7 +12,7 @@ async function getProblemDescription(titleSlug: string, token: string) {
 
     console.info("Problem fetched successfully:", response.data);
 
-    return response.data.description;
+    return response.data.problemDescription;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error fetching problem:", error.response.data);
@@ -32,7 +32,7 @@ async function getSample(titleSlug: string, token: string) {
     });
 
     console.info("Sample fetched successfully:", response.data);
-    return response.data.sample;
+    return response.data.sampleCode.javascript;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       console.error("Error fetching sample:", error.response.data);

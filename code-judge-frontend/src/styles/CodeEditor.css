@@ -2,8 +2,7 @@
 .container {
   display: grid;
   grid-template-columns: 1fr 1.5fr; /* 40% / 60% split */
-  height: 100vh;
-  min-height: 600px; /* Set a minimum height */
+  height: 50vh;
   gap: 0; /* No gap between columns */
 }
 
@@ -13,7 +12,7 @@
   padding: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  min-width: 300px; /* Ensures minimum usability */
+  height: 40vh;
 }
 
 /* Editor Section */
@@ -22,7 +21,7 @@
   flex-direction: column;
   position: relative; /* For absolute positioning of internal elements */
   background-color: #ffffff;
-  min-width: 450px; /* Ensures minimum usability */
+  height: 40vh;
   padding: 20px;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
 }

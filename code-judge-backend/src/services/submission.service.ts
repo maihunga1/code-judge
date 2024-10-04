@@ -71,7 +71,6 @@ class SubmissionService {
       submission_id: randomUUID(),
       user_id: userID,
       title_slug: titleSlug,
-      code_file_url: "",
       language: lang,
       result: execResponse ? "failed" : "passed",
       message: execResponse || "",

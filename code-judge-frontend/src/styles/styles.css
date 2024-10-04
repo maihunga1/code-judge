@@ -1,7 +1,7 @@
 /* Container */
 .container {
   display: flex;
-  height: 100vh;
+  height: 50vh;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0f2f5;
   color: #333;
@@ -20,6 +20,7 @@
 /* EditorContainer */
 .editor-container {
   width: 60%;
+  height: 40vh;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;

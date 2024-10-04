@@ -26,7 +26,7 @@ export class CodeJudgeRouter {
     // Create a new submission
     this.router.post("/submissions", codeJudgeController.createSubmission);
 
-    this.router.get("/user/:userID", codeJudgeController.getUserByID);
+    this.router.get("/user", codeJudgeController.getUserByID);
 
     this.router.get(
       "/submissions/:userID",

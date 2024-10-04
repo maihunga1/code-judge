@@ -34,7 +34,7 @@ export class ProblemService {
   }
 
   private async ensureProblemExists(titleSlug: string): Promise<void> {
-    if (await fileService.checkProblemExists(titleSlug)) return;
+    if (fileService.checkProblemExists(titleSlug)) return;
 
     await s3Service.fetchProblem(titleSlug);
   }

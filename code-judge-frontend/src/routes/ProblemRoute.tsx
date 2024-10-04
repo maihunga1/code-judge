@@ -11,6 +11,7 @@ import { setUser } from "../store/slices/userSlice";
 import ProblemList from "../components/ProblemList";
 import { Route } from "react-router-dom";
 import { RootState } from "../store/store";
+import { backendUrl } from "../api/api";
 
 export const PrivateRoute = memo(function PrivateRoute({
   children,
@@ -27,7 +28,15 @@ export const PrivateRoute = memo(function PrivateRoute({
       bc.onmessage = (payload: any) => {
         console.log(payload.data);
 
-        dispatch(setUser({ idToken: payload.data }));
+        fetch(`${backendUrl}/user`, {
+          headers: {
+            Authorization: `Bearer ${payload.data}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            dispatch(setUser({ idToken: payload.data, userId: data.userID }));
+          });
       };
     }
   }, [dispatch]);
@@ -60,12 +69,13 @@ export const PrivateRoute = memo(function PrivateRoute({
   ) : (
     <div className="w-screen h-screen">
       <div className="flex w-full p-4 justify-end">
-        <button
-          className="w-20 border-2 border-sky-500 rounded flex items-center justify-center"
-          onClick={handleLogin}
+        {!userToken && (
+          <button
+            className="w-20 border-2 border-sky-500 rounded flex items-center justify-center"
+            onClick={handleLogin}
         >
           Login
-        </button>
+        </button>)}
       </div>
     </div>
   );

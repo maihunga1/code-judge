@@ -5,12 +5,14 @@ export interface UserSlice {
   username?: string;
   email?: string;
   idToken?: string;
+  userId?: string;
 }
 
 const initialState: UserSlice = {
   username: undefined,
   email: undefined,
   idToken: undefined,
+  userId: undefined,
 }
 
 export const userSlice = createSlice({
@@ -21,6 +23,7 @@ export const userSlice = createSlice({
       state.username = action.payload.username
       state.email = action.payload.email
       state.idToken = action.payload.idToken
+      state.userId = action.payload.userId
     }
   },
 })

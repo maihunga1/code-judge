@@ -1,8 +1,11 @@
-import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+  DynamoDBDocumentClient,
+  PutCommand,
+  ScanCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { fromEnv } from "@aws-sdk/credential-providers";
 import { SubmissionModel } from "./models/submission.model";
-import { isLanguage } from "../utils";
 
 export class SubmissionDB {
   private readonly dynamoDBDocumentClient: DynamoDBDocumentClient;
@@ -28,7 +31,7 @@ export class SubmissionDB {
         TableName: this.tableName,
         FilterExpression: "user_id = :userID",
         ExpressionAttributeValues: {
-          ":userID": { S: userID },
+          ":userID": userID,
         },
       })
     );
@@ -38,30 +41,28 @@ export class SubmissionDB {
         (item) =>
           new SubmissionModel({
             "qut-username": this.qutUsername,
-            submission_id: item.submission_id?.S ?? "",
-            user_id: item.user_id?.S ?? "",
-            title_slug: item.title_slug?.S ?? "",
-            code_file_url: item.code_file_url?.S ?? "",
-            language: item.language?.S ?? "",
-            result: item.result?.S ?? "",
-            message: item.message?.S ?? "",
-            created: item.created?.S ? new Date(item.created.S) : new Date(),
+            submission_id: item.submission_id,
+            user_id: item.user_id,
+            title_slug: item.title_slug,
+            language: item.language,
+            result: item.result,
+            message: item.message,
+            created: item.created ? new Date(item.created) : new Date(),
           })
       ) || []
     );
   }
 
   async putSubmission(submission: SubmissionModel): Promise<void> {
-    const item = {
-      "qut-username": { S: this.qutUsername },
-      submission_id: { S: submission.submissionID },
-      user_id: { S: submission.userID },
-      title_slug: { S: submission.titleSlug },
-      code_file_url: { S: submission.codeFileURL },
-      language: { S: submission.language },
-      result: { S: submission.result },
-      message: { S: submission.message },
-      created: { S: submission.created.toISOString() },
+    const item: any = {
+      "qut-username": this.qutUsername,
+      submission_id: submission.submissionID,
+      user_id: submission.userID,
+      title_slug: submission.titleSlug,
+      result: submission.result,
+      language: submission.language,
+      message: submission.message,
+      created: submission.created.toISOString(),
     };
 
     await this.dynamoDBDocumentClient.send(

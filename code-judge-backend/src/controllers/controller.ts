@@ -6,9 +6,7 @@ export class CodeJudgeController {
     const { titleSlug, codeFileContent, language: lang } = req.body;
     const { userId: userID } = req.user.identities[0];
 
-    if (!userID) {
-      throw new Error("User ID not found in token");
-    }
+    if (!userID) throw new Error("User ID not found in token");
 
     try {
       const result = await submissionService.createSubmission(
@@ -39,7 +37,8 @@ export class CodeJudgeController {
   }
 
   async getUserByID(req: Request, res: Response): Promise<void> {
-    const { userID } = req.params;
+    const { userId: userID } = req.user.identities[0];
+    console.log(userID);
     const user = await userService.getUserByID(userID);
     res.status(200).json(user);
   }

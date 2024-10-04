@@ -17,7 +17,7 @@ const Problems: React.FC = React.memo(() => {
       if (!token) return;
 
       getProblemDescription(titleSlug, token)
-        .then((problem) => setProblem(problem))
+        .then((problem) => setProblem(problem.replaceAll("\\n", "\n").replaceAll("\\t", "\t")))
         .catch((error) => console.error(error));
     }
   }, [titleSlug, token]);

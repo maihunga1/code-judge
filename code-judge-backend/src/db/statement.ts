@@ -57,15 +57,15 @@ class PreparedStatements {
     const connection = await this.pool.getConnection();
 
     this.preparedStatements[StatementName.GET_USER_BY_ID] =
-      await connection.prepare("SELECT * FROM user WHERE userID = ? LIMIT 1");
+      await connection.prepare("SELECT * FROM users WHERE userID = ? LIMIT 1");
 
     this.preparedStatements[StatementName.GET_PROBLEM_BY_TITLE_SLUG] =
       await connection.prepare(
-        "SELECT * FROM problem WHERE title_slug = ? LIMIT 1"
+        "SELECT * FROM problems WHERE title_slug = ? LIMIT 1"
       );
 
     this.preparedStatements[StatementName.LIST_PROBLEMS] =
-      await connection.prepare("SELECT * FROM problem");
+      await connection.prepare("SELECT * FROM problems");
 
     connection.release();
   }

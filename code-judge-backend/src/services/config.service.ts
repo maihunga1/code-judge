@@ -16,7 +16,7 @@ class ConfigService {
             "/n11744260/auth/userPoolID",
             "/n11744260/auth/clientID",
             "/n11744260/docker-images/python",
-            "/n11744260/docker-images/node",
+            "/n11744260/docker-images/javascript",
             "/n11744260/docker-images/golang",
           ],
         })

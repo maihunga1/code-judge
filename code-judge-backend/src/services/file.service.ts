@@ -123,7 +123,7 @@ export class FileService {
     return result;
   }
 
-  async checkProblemExists(titleSlug: string): Promise<boolean> {
+  checkProblemExists(titleSlug: string): boolean {
     const filePath = this.getFileProblemDescriptionPath(titleSlug);
 
     return fs.existsSync(filePath);
@@ -131,6 +131,7 @@ export class FileService {
 
   async writeS3Object(objectKey: string, content: string): Promise<void> {
     const filePath = path.join(this.basePath, objectKey);
+
     await this.writeFile(filePath, content);
   }
 
@@ -139,7 +140,7 @@ export class FileService {
       await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
     }
 
-    fs.promises.writeFile(filePath, content);
+    await fs.promises.writeFile(filePath, content);
   }
 }
 

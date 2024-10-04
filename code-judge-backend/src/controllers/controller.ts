@@ -38,7 +38,6 @@ export class CodeJudgeController {
 
   async getUserByID(req: Request, res: Response): Promise<void> {
     const { userId: userID } = req.user.identities[0];
-    console.log(userID);
     const user = await userService.getUserByID(userID);
     res.status(200).json(user);
   }

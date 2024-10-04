@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import MemoizedProblemComponent from "./Problems";
+import MemoizedProblemComponent from "./problems";
 import CodeEditor from "./CodeEditor";
 import Result, { SubmissionResult } from "./Result";
 import { useSelector } from "react-redux";
@@ -95,6 +95,7 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
             onCodeChange={handleCodeChange}
           />
         </div>
+
         <div className={`w-full p-2 ${isSubmitted ? "block" : "hidden"}`}>
           {listView?.map((item: any) => (
             <div
@@ -104,8 +105,12 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
               <p className="text-blue-500 mb-2">Problem: {item.titleSlug}</p>
               <p className="text-green-500 mb-2">Language: {item.language}</p>
               <p className="text-red-500 mb-2">Result: {item.result}</p>
-              <p className="text-yellow-500 mb-2 w-full text-wrap overflow-hidden">{item.message}</p>
-              <p className="text-gray-400">Submitted: {new Date(item.created).toLocaleString()}</p>
+              <p className="text-yellow-500 mb-2 w-full text-wrap overflow-hidden">
+                {item.message}
+              </p>
+              <p className="text-gray-400">
+                Submitted: {new Date(item.created).toLocaleString()}
+              </p>
             </div>
           ))}
         </div>
@@ -113,14 +118,5 @@ const EditorWrapper: React.FC<EditorWrapperProps> = React.memo(
     );
   }
 );
-
-// "qut-username": "n11744260@qut.edu.au",
-// "submissionID": "ac1ec53f-8e8f-4919-9182-474585aabcbb",
-// "userID": "110952807528078906936",
-// "titleSlug": "two-sum",
-// "language": "javascript",
-// "result": "passed",
-// "message": "",
-// "created": "2024-10-04T12:39:28.704Z"
 
 export default EditorWrapper;

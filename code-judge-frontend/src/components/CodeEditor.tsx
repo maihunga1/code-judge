@@ -74,7 +74,7 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
     }, [titleSlug, token]);
 
     return (
-      <div className="editor-container h-[40vh]">
+      <div className="editor-container h-[80vh]">
         <div className="language-selector">
           <label htmlFor="language-select" style={{ marginRight: "10px" }}>
             Choose a language:
@@ -91,17 +91,16 @@ const CodeEditor: React.FC<CodeEditorProps> = React.memo(
         </div>
         <div className="editor-wrapper">
           <Editor
-            height="calc(40vh - 60px)"
+            height="calc(80vh - 80px)"
             language={language}
             defaultValue={sample}
             beforeMount={handleEditorWillMount}
             onMount={handleEditorDidMount}
           />
           <div className="w-full flex justify-end">
-          <button className="submit-button" onClick={handleSubmit}>
-            Submit
-          </button>
-
+            <button className="submit-button" onClick={handleSubmit}>
+              Submit
+            </button>
           </div>
         </div>
       </div>

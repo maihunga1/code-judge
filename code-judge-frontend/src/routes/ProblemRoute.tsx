@@ -67,15 +67,19 @@ export const PrivateRoute = memo(function PrivateRoute({
   return !!userToken ? (
     <>{children}</>
   ) : (
-    <div className="w-screen h-screen">
-      <div className="flex w-full p-4 justify-end">
-        {!userToken && (
-          <button
-            className="w-20 border-2 border-sky-500 rounded flex items-center justify-center"
+    <div className="w-screen h-screen flex items-center justify-center">
+      <div className="text-center">
+        <p className="text-lg mb-4">Welcome to Leetcode</p>
+        <p className="text-md">
+          Please{" "}
+          <span
+            className="text-sky-500 cursor-pointer underline"
             onClick={handleLogin}
-        >
-          Login
-        </button>)}
+          >
+            click here
+          </span>{" "}
+          to login.
+        </p>
       </div>
     </div>
   );

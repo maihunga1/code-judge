@@ -2,7 +2,7 @@
 .container {
   display: grid;
   grid-template-columns: 1fr 1.5fr; /* 40% / 60% split */
-  height: 50vh;
+  height: 80vh;
   gap: 0; /* No gap between columns */
 }
 
@@ -12,7 +12,7 @@
   padding: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  height: 40vh;
+  height: 80vh;
 }
 
 /* Editor Section */
@@ -21,7 +21,7 @@
   flex-direction: column;
   position: relative; /* For absolute positioning of internal elements */
   background-color: #ffffff;
-  height: 40vh;
+  height: 80vh;
   padding: 20px;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
 }

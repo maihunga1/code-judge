@@ -4,7 +4,6 @@ import EditorWrapper from "./components/EditorWrapper";
 import { AuthProvider } from "./context/AuthContext";
 import { CodeEditorProps } from "./components/CodeEditor";
 import { submitSolution } from "./api/api";
-import AuthCallback from "./components/AuthCallback";
 import { Provider, useSelector } from "react-redux";
 import { RootState, store } from "./store/store";
 import { PrivateRoute } from "./routes/ProblemRoute";
@@ -77,7 +76,14 @@ const AppContent = memo(function App(): React.ReactElement {
               </PrivateRoute>
             }
           />
-          <Route path="/auth-callback" element={<AuthCallback />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <ProblemList />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>

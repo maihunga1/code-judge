@@ -36,7 +36,10 @@ function ProblemList() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
+    window.open(
+      "https://n11744260-assignment2.auth.ap-southeast-2.amazoncognito.com/oauth2/authorize?client_id=1rhukc2hl118rejuis4hftarf8&response_type=token&scope=email+openid+phone+profile&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fproblems",
+      "_blank"
+    );
   };
 
   if (loading) {

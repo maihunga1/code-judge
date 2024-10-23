@@ -48,6 +48,7 @@ export const PrivateRoute = memo(function PrivateRoute({
 
     console.log(accessToken); // This will log the access token
     const code = params.get("id_token");
+    console.log(code);
 
     if (!code) return;
 

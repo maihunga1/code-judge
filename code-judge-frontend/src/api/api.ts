@@ -1,10 +1,12 @@
 import axios from "axios";
 
-export const backendUrl = "http://localhost:3000";
+export const problemUrl = "http://localhost:3000";
+
+export const submissionUrl = "http://localhost:3001";
 
 async function getProblemDescription(titleSlug: string, token: string) {
   try {
-    const response = await axios.get(`${backendUrl}/problems/${titleSlug}`, {
+    const response = await axios.get(`${problemUrl}/problems/${titleSlug}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -25,7 +27,7 @@ async function getProblemDescription(titleSlug: string, token: string) {
 
 async function getSample(titleSlug: string, token: string) {
   try {
-    const response = await axios.get(`${backendUrl}/problems/${titleSlug}`, {
+    const response = await axios.get(`${problemUrl}/problems/${titleSlug}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -45,7 +47,7 @@ async function getSample(titleSlug: string, token: string) {
 
 async function getAllProblems(token: string) {
   try {
-    const response = await axios.get(`${backendUrl}/problems`, {
+    const response = await axios.get(`${problemUrl}/problems`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -76,7 +78,7 @@ async function submitSolution(
 
   try {
     const response = await axios.post(
-      `${backendUrl}/submissions`,
+      `${submissionUrl}/submissions`,
       {
         titleSlug,
         codeFileContent,

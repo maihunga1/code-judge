@@ -1,6 +1,5 @@
 import express, { Router } from "express";
 import { submissionController } from "../controllers";
-import { authenticate } from "../middleware/auth.middleware";
 
 export class SubmissionRouter {
   private readonly router: Router;
@@ -11,9 +10,6 @@ export class SubmissionRouter {
   }
 
   private initializeRoutes(): void {
-    // Apply authenticate middleware to all routes
-    this.router.use(authenticate);
-
     // Create a new submission
     this.router.post("/submissions", submissionController.createSubmission);
 

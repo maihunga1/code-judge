@@ -65,6 +65,11 @@ export class FileService {
     return this.getFileContent(filePath);
   }
 
+  async getTestCases(titleSlug: string): Promise<string> {
+    const filePath = this.getFileTestCasePath(titleSlug);
+    return this.getFileContent(filePath);
+  }
+
   // Getting code sample
   async getSample(titleSlug: string): Promise<Record<Language, string>> {
     const result: Record<Language, string> = {

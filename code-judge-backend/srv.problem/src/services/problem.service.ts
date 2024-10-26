@@ -28,6 +28,10 @@ export class ProblemService {
     return problem;
   }
 
+  async getTestCases(titleSlug: string): Promise<string> {
+    return fileService.getTestCases(titleSlug);
+  }
+
   async listProblems(): Promise<ProblemModel[]> {
     return this.problemDB.listProblems();
   }

@@ -28,7 +28,7 @@ export class ProblemModel {
 
   constructor(data: Problem) {
     this.problemID = data.problemID;
-    this.titleSlug = data.title_slug;
+    this.titleSlug = data.titleSlug;
     this.difficulty = data.difficulty;
     this.likes = data.likes;
     this.dislikes = data.dislikes;

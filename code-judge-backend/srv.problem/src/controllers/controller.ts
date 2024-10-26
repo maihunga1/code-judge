@@ -15,6 +15,14 @@ export class ProblemController {
 
     res.status(200).json(problem);
   }
+
+  async getTestCases(req: Request, res: Response): Promise<void> {
+    const { titleSlug } = req.params;
+
+    const testCases = await problemService.getTestCases(titleSlug);
+
+    res.status(200).json(testCases);
+  }
 }
 
 export const problemController = new ProblemController();

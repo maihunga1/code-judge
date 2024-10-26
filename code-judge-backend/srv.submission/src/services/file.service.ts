@@ -40,24 +40,17 @@ export class FileService {
     this.basePath = path.join(__dirname, "..", ".."); // Go up two levels to reach the project root
   }
 
-  getFileProblemDescriptionPath(titleSlug: string): string {
-    return path.join(this.basePath, "problems", titleSlug, "description.txt");
+  async getFileTestCase(titleSlug: string): Promise<string> {
+    const response = await fetch(`https://example.com/api/problems/${titleSlug}/test-case`);
+    if (!response.ok) {
+      throw new Error('Failed to retrieve test case content');
+    }
+    const data = await response.text();
+    return data;
   }
 
-  getFileTestCasePath(titleSlug: string): string {
-    return path.join(this.basePath, "problems", titleSlug, "test-case.txt");
-  }
-
-  getFileCodeTemplatePath(titleSlug: string, ext: languageExt): string {
-    return path.join(this.basePath, "problems", titleSlug, `sample.${ext}`);
-  }
-
-  getFileContent(filePath: string): string {
-    return fs.readFileSync(filePath, "utf-8");
-  }
-
-  checkProblemExists(titleSlug: string): boolean {
-    const filePath = this.getFileProblemDescriptionPath(titleSlug);
+  checkProblemExists = async (titleSlug: string): Promise<boolean> => {
+    const filePath = await this.getFileTestCase(titleSlug);
 
     return fs.existsSync(filePath);
   }
@@ -91,20 +84,6 @@ export class FileService {
     return entry.type === "fileContent"
       ? new FileContentStrategy()
       : new FilePathStrategy();
-  }
-
-  async writeS3Object(objectKey: string, content: string): Promise<void> {
-    const filePath = path.join(this.basePath, objectKey);
-
-    await this.writeFile(filePath, content);
-  }
-
-  async writeFile(filePath: string, content: string): Promise<void> {
-    if (!fs.existsSync(filePath)) {
-      await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-    }
-
-    await fs.promises.writeFile(filePath, content);
   }
 }
 

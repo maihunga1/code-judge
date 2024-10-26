@@ -1,6 +1,5 @@
 import express, { Router } from "express";
 import { problemController } from "../controllers";
-import { authenticate } from "../middleware/auth.middleware";
 
 export class ProblemRouter {
   private readonly router: Router;
@@ -11,9 +10,6 @@ export class ProblemRouter {
   }
 
   private initializeRoutes(): void {
-    // Apply authenticate middleware to all routes
-    this.router.use(authenticate);
-
     // Get all problems
     this.router.get("/problems", problemController.listProblems);
 
@@ -22,6 +18,11 @@ export class ProblemRouter {
       "/problems/:titleSlug",
       problemController.getProblemByTitleSlug
     );
+
+    this.router.get(
+      "/problems/:titleSlug/test-cases",
+      problemController.getTestCases
+    )
   }
 
   public getRouter(): Router {

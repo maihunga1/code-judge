@@ -11,7 +11,7 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3002;
 
 async function startServer() {
   try {
@@ -22,6 +22,10 @@ async function startServer() {
     const { submissionRouter } = await import("./routes");
 
     app.use(submissionRouter);
+
+    app.get("/health", (_, res) => {
+      res.status(200).json({ status: "healthy" });
+    });
 
     app.listen(port, () => {
       console.log(`Server is running at http://localhost:${port}`);

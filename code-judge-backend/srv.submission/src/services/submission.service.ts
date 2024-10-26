@@ -40,7 +40,7 @@ class SubmissionService {
     // Prepare test case file entry
     const testFileBufferEntry: BufferEntry = {
       fileName: "test-case.txt",
-      content: fileService.getFileTestCasePath(titleSlug),
+      content: await fileService.getFileTestCase(titleSlug),
       type: "filePath",
     };
 
